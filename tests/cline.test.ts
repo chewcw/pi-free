@@ -8,6 +8,7 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { GLOB_TOOL_NAME } from "../lib/glob-tool.ts";
 
 const mockFetchClineCatalog = vi.hoisted(() =>
 	vi.fn<(...args: unknown[]) => unknown>(),
@@ -237,6 +238,82 @@ describe("Cline factory wiring", () => {
 		// A different provider does not rotate the task id.
 		await handler({}, { model: { provider: "kilo" } });
 		expect(buildClineHeaders()["X-Task-ID"]).toBe(after);
+	});
+
+	describe("glob tool selection", () => {
+		it("adds glob to selectedTools for cline models", async () => {
+			await clineProvider(mockPi);
+			const handler = mockOn.mock.calls.find(
+				(call) => call[0] === "before_agent_start",
+			)?.[1];
+			expect(handler).toBeDefined();
+			const selectedTools: string[] = ["read", "bash"];
+			await handler(
+				{ systemPromptOptions: { selectedTools } },
+				{ model: { provider: "cline" } },
+			);
+			expect(selectedTools).toContain(GLOB_TOOL_NAME);
+			expect(selectedTools).toEqual(["read", "bash", "glob"]);
+		});
+
+		it("is idempotent: does not duplicate glob on repeated turns", async () => {
+			await clineProvider(mockPi);
+			const handler = mockOn.mock.calls.find(
+				(call) => call[0] === "before_agent_start",
+			)?.[1];
+			expect(handler).toBeDefined();
+			const selectedTools: string[] = ["read", "glob"];
+			await handler(
+				{ systemPromptOptions: { selectedTools } },
+				{ model: { provider: "cline" } },
+			);
+			await handler(
+				{ systemPromptOptions: { selectedTools } },
+				{ model: { provider: "cline" } },
+			);
+			expect(selectedTools).toEqual(["read", "glob"]);
+		});
+
+		it("does not add glob for non-cline providers", async () => {
+			await clineProvider(mockPi);
+			const handler = mockOn.mock.calls.find(
+				(call) => call[0] === "before_agent_start",
+			)?.[1];
+			expect(handler).toBeDefined();
+			const selectedTools: string[] = ["read", "bash"];
+			await handler(
+				{ systemPromptOptions: { selectedTools } },
+				{ model: { provider: "kilo" } },
+			);
+			expect(selectedTools).not.toContain(GLOB_TOOL_NAME);
+			expect(selectedTools).toEqual(["read", "bash"]);
+		});
+
+		it("does not add glob when provider is undefined", async () => {
+			await clineProvider(mockPi);
+			const handler = mockOn.mock.calls.find(
+				(call) => call[0] === "before_agent_start",
+			)?.[1];
+			expect(handler).toBeDefined();
+			const selectedTools: string[] = ["read", "bash"];
+			await handler(
+				{ systemPromptOptions: { selectedTools } },
+				{ model: {} },
+			);
+			expect(selectedTools).not.toContain(GLOB_TOOL_NAME);
+			expect(selectedTools).toEqual(["read", "bash"]);
+		});
+
+		it("does not throw when systemPromptOptions is missing", async () => {
+			await clineProvider(mockPi);
+			const handler = mockOn.mock.calls.find(
+				(call) => call[0] === "before_agent_start",
+			)?.[1];
+			expect(handler).toBeDefined();
+			expect(() =>
+				handler({}, { model: { provider: "cline" } }),
+			).not.toThrow();
+		});
 	});
 
 	// Nudge scoping/retry is pinned in native-refresh-nudge.test.ts; the

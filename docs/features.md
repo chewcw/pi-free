@@ -32,8 +32,9 @@ pi-free therefore:
 
 - registers Pi's built-in `find` definition under the name **`glob`** (`createFindToolDefinition`), so the tool keeps Pi's own implementation — schema, `.gitignore` handling, truncation, and the host's search backend. pi-free adds no dependency and spawns nothing itself, so this stays OS-agnostic; and
 - adds `glob` and `grep` to that run's selected tools when the selected model is on `opencode-free` (`event.systemPromptOptions.selectedTools`). The change is per-turn, so no other provider's request changes and nothing is activated globally.
+- also selects `glob` on Cline model turns via cline's `before_agent_start` handler, so Cline models have access to the tool.
 
-The `glob` tool is registered for every session but only selected on `opencode-free` turns. `opencode-free` inference also sends Zen's anonymous `public` bearer instead of the stored account credential (the keyed free-tier lane is rejected upstream); `opencode-go` keeps its credential. See [providers](providers.md#opencode-and-opencode-go).
+The `glob` tool is registered for every session but only selected on `opencode-free` and Cline turns. `opencode-free` inference also sends Zen's anonymous `public` bearer instead of the stored account credential (the keyed free-tier lane is rejected upstream); `opencode-go` keeps its credential. See [providers](providers.md#opencode-and-opencode-go).
 
 ## Coding Index (CI) scores
 

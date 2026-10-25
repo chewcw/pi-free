@@ -29,6 +29,7 @@ import {
 	registerNativeProviderRefresh,
 	registerNativeProviderToggle,
 } from "../../lib/native-provider.ts";
+import { GLOB_TOOL_NAME } from "../../lib/glob-tool.ts";
 import { createClineProvider, rotateClineTaskId } from "./cline-provider.ts";
 
 // =============================================================================
@@ -67,9 +68,13 @@ export default async function clineProvider(pi: ExtensionAPI) {
 	// cline-headers.ts), which every Cline model holds as its `headers` —
 	// pi-ai merges only the model's headers into requests — so the new
 	// X-Task-ID takes effect immediately, no re-registration needed.
-	pi.on("before_agent_start", (_event, ctx) => {
+	pi.on("before_agent_start", (event, ctx) => {
 		if (ctx.model?.provider !== PROVIDER_CLINE) return;
 		rotateClineTaskId();
+		const selected = event?.systemPromptOptions?.selectedTools;
+		if (Array.isArray(selected) && !selected.includes(GLOB_TOOL_NAME)) {
+			selected.push(GLOB_TOOL_NAME);
+		}
 	});
 
 	registerNativeProviderRefresh(pi, PROVIDER_CLINE);
