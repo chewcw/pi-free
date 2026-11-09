@@ -48,7 +48,7 @@ describe("bespoke stored.complete (#609)", () => {
 			{
 				id: "default",
 				name: "LLM7 Default",
-				provider: "llm7",
+				provider: "free-llm7",
 				api: "openai-completions",
 				baseUrl: "https://llm7.io/v1",
 				reasoning: false,
