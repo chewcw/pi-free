@@ -34,28 +34,28 @@ These providers use Pi's native provider surface and model store. Their toggles 
 Kilo supports free models and paid catalog entries. Authenticate with OAuth or an API key:
 
 ```text
-/login kilo
+/login free-kilo
 ```
 
 ```bash
 export KILO_API_KEY="..."
 ```
 
-Or set `kilo_api_key` in `~/.pi/free.json`. Kilo credentials are persisted by Pi in `~/.pi/agent/auth.json`. Use `/toggle-kilo` to change the visible catalog.
+Or set `kilo_api_key` in `~/.pi/free.json`. Kilo credentials are persisted by Pi in `~/.pi/agent/auth.json`. Use `/toggle-free-kilo` to change the visible catalog.
 
 ### Cline
 
 Cline's model catalog is public, so models can appear before login. Login is required for chat requests:
 
 ```text
-/login cline
+/login free-cline
 ```
 
 Cline also accepts `CLINE_API_KEY` or `cline_api_key`. OAuth/API-key credentials are stored by Pi in `~/.pi/agent/auth.json`. Cline's endpoint speaks standard OpenAI Chat Completions; the provider uses the `openai-completions` api with Cline identity headers.
 
 ### LLM7
 
-LLM7 provides free selector-based access through an OpenAI-compatible endpoint. Set `LLM7_API_KEY` or `llm7_api_key` as required by the service, then use `/toggle-llm7`.
+LLM7 provides free selector-based access through an OpenAI-compatible endpoint. Set `LLM7_API_KEY` or `llm7_api_key` as required by the service, then use `/toggle-free-llm7`.
 
 ```bash
 export LLM7_API_KEY="..."
@@ -69,7 +69,7 @@ Ollama Cloud provides usage-based free access alongside other catalog entries. G
 export OLLAMA_API_KEY="..."
 ```
 
-Or set `ollama_api_key` in `~/.pi/free.json`. Use `/toggle-ollama-cloud`, `/probe-ollama`, and `/ollama-cloud-refresh`. Although Ollama is native, it retains `~/.pi/provider-cache.json` for `/api/show` capability reuse and the compatibility refresh command; Pi's native model store remains authoritative for native lifecycle initialization.
+Or set `ollama_api_key` in `~/.pi/free.json`. Use `/toggle-free-ollama-cloud`, `/probe-ollama`, and `/ollama-cloud-refresh`. Although Ollama is native, it retains `~/.pi/provider-cache.json` for `/api/show` capability reuse and the compatibility refresh command; Pi's native model store remains authoritative for native lifecycle initialization.
 
 ### AnyAPI
 
@@ -89,7 +89,7 @@ SambaNova offers a free tier with rate limits:
 export SAMBANOVA_API_KEY="..."
 ```
 
-Or set `sambanova_api_key`. Toggle with `/toggle-sambanova`; `/probe-sambanova` checks availability.
+Or set `sambanova_api_key`. Toggle with `/toggle-free-sambanova`; `/probe-free-sambanova` checks availability.
 
 ### TokenRouter
 
@@ -99,11 +99,11 @@ TokenRouter is an OpenAI-compatible gateway with free and paid models:
 export TOKENROUTER_API_KEY="..."
 ```
 
-Or set `tokenrouter_api_key`. Toggle with `/toggle-tokenrouter`.
+Or set `tokenrouter_api_key`. Toggle with `/toggle-free-tokenrouter`.
 
 ### StepFun
 
-StepFun Step Plan is a native, paid OpenAI-compatible provider. Pi uses the Chat Completions endpoint at `https://api.stepfun.ai/step_plan/v1/chat/completions`; the same base also exposes an Anthropic-compatible Messages endpoint at `/messages` for clients such as Claude Code. Set `STEPFUN_API_KEY` or `stepfun_api_key` and toggle with `/toggle-stepfun`. StepFun shows its paid catalog by default because its catalog has no free models; hide it with `/toggle-stepfun`, `"model_view_overrides": {"stepfun": "free"}`, or `STEPFUN_SHOW_PAID=false`.
+StepFun Step Plan is a native, paid OpenAI-compatible provider. Pi uses the Chat Completions endpoint at `https://api.stepfun.ai/step_plan/v1/chat/completions`; the same base also exposes an Anthropic-compatible Messages endpoint at `/messages` for clients such as Claude Code. Set `STEPFUN_API_KEY` or `stepfun_api_key` and toggle with `/toggle-free-stepfun`. StepFun shows its paid catalog by default because its catalog has no free models; hide it with `/toggle-free-stepfun`, `"model_view_overrides": {"stepfun": "free"}`, or `STEPFUN_SHOW_PAID=false`.
 
 ### GMI Cloud
 
@@ -115,7 +115,7 @@ Agnes AI is a native OpenAI-compatible provider mixing free and paid chat models
 
 ### Venice AI
 
-Venice AI is a native OpenAI-compatible provider mixing free-classified and paid chat models. Pi uses the inference API at `https://api.venice.ai/api/v1/chat/completions` (100+ text models billed in USD or DIEM per million tokens); the same base also exposes `GET /models?type=text`. The model catalog endpoint is public, but models appear only after login — chat requires `VENICE_API_KEY` or `venice_api_key`; toggle with `/toggle-venice`. Free/paid classification follows the published pricing (zero-priced models count as free). **Balance gate:** Venice requires a positive account balance for all inference — including zero-priced models, which answer HTTP 402 on unfunded keys — so a model classified as free can still fail at request time until the account is funded.
+Venice AI is a native OpenAI-compatible provider mixing free-classified and paid chat models. Pi uses the inference API at `https://api.venice.ai/api/v1/chat/completions` (100+ text models billed in USD or DIEM per million tokens); the same base also exposes `GET /models?type=text`. The model catalog endpoint is public, but models appear only after login — chat requires `VENICE_API_KEY` or `venice_api_key`; toggle with `/toggle-free-venice`. Free/paid classification follows the published pricing (zero-priced models count as free). **Balance gate:** Venice requires a positive account balance for all inference — including zero-priced models, which answer HTTP 402 on unfunded keys — so a model classified as free can still fail at request time until the account is funded.
 
 ### Infron AI
 
@@ -127,11 +127,11 @@ Infron AI (infron.ai) is a unified AI gateway with passthrough pricing and poole
 
 ### CommandCode
 
-[CommandCode](https://commandcode.ai) is an AI subscription gateway routing to ~60 models (OpenAI GPT-5.6 family, Claude Opus/Sonnet, Gemini 3.x, Grok 4.6, Kimi K3, Qwen 3.7/3.8, GLM 5.x, DeepSeek V4) through one Provider API at `https://api.commandcode.ai/provider/v1/chat/completions`. The catalog endpoint is public (anonymous `/models` returns 200), but models appear only after login; chat requires an account whose plan includes **Provider API access** (`COMMAND_CODE_API_KEY` or `commandcode_api_key`; Go plans answer `upgrade_required`) — toggle with `/toggle-commandcode`. Pricing comes from a curated USD-per-M table ported from the MIT-licensed patlux/pi-commandcode-provider extension (verified against CommandCode's official pricing page 2026-08-25); zero-priced entries (`poolside/laguna-s-2.1-free`, `stealth/ox-alpha`) classify as free. Wire note: `claude-*` models route over Anthropic Messages, everything else over OpenAI Chat Completions — the provider dispatches transports per model.
+[CommandCode](https://commandcode.ai) is an AI subscription gateway routing to ~60 models (OpenAI GPT-5.6 family, Claude Opus/Sonnet, Gemini 3.x, Grok 4.6, Kimi K3, Qwen 3.7/3.8, GLM 5.x, DeepSeek V4) through one Provider API at `https://api.commandcode.ai/provider/v1/chat/completions`. The catalog endpoint is public (anonymous `/models` returns 200), but models appear only after login; chat requires an account whose plan includes **Provider API access** (`COMMAND_CODE_API_KEY` or `commandcode_api_key`; Go plans answer `upgrade_required`) — toggle with `/toggle-free-commandcode`. Pricing comes from a curated USD-per-M table ported from the MIT-licensed patlux/pi-commandcode-provider extension (verified against CommandCode's official pricing page 2026-08-25); zero-priced entries (`poolside/laguna-s-2.1-free`, `stealth/ox-alpha`) classify as free. Wire note: `claude-*` models route over Anthropic Messages, everything else over OpenAI Chat Completions — the provider dispatches transports per model.
 
 ### FastRouter
 
-FastRouter is a native OpenAI-compatible provider with a public catalog. Pi restores its model store first and refreshes the catalog asynchronously; a key is required for chat requests but not model listing. Set `FASTROUTER_API_KEY` or `fastrouter_api_key`, then use `/toggle-fastrouter`.
+FastRouter is a native OpenAI-compatible provider with a public catalog. Pi restores its model store first and refreshes the catalog asynchronously; a key is required for chat requests but not model listing. Set `FASTROUTER_API_KEY` or `fastrouter_api_key`, then use `/toggle-free-fastrouter`.
 
 ## Paid and trial providers
 
@@ -143,7 +143,7 @@ Gateway for models from multiple upstream vendors. Requires an API key and avail
 export ZENMUX_API_KEY="..."
 ```
 
-Or set `zenmux_api_key`. Toggle with `/toggle-zenmux`.
+Or set `zenmux_api_key`. Toggle with `/toggle-free-zenmux`.
 
 The catalog also lists non-chat endpoints (image/video generation, speech/transcription, embeddings, rerank); pi-free registers only chat-capable entries, dropping any model whose `output_modalities` is present and does not include `text` and keeping rows with no modality info.
 
@@ -155,7 +155,7 @@ DeepInfra offers trial credits and paid inference. Its environment variable is i
 export DEEPINFRA_TOKEN="..."
 ```
 
-Or set `deepinfra_api_key`. Toggle with `/toggle-deepinfra`; `/probe-deepinfra` checks availability.
+Or set `deepinfra_api_key`. Toggle with `/toggle-free-deepinfra`; `/probe-free-deepinfra` checks availability.
 
 ### Novita AI
 
@@ -165,7 +165,7 @@ OpenAI-compatible inference provider with free-tier and paid catalog entries:
 export NOVITA_API_KEY="..."
 ```
 
-Or set `novita_api_key`. Toggle with `/toggle-novita`; `/probe-novita` checks availability.
+Or set `novita_api_key`. Toggle with `/toggle-free-novita`; `/probe-free-novita` checks availability.
 
 ### Routeway
 
@@ -175,7 +175,7 @@ OpenAI-compatible gateway with free-tier model entries and paid models:
 export ROUTEWAY_API_KEY="..."
 ```
 
-Or set `routeway_api_key`. Toggle with `/toggle-routeway`; `/probe-routeway` checks availability.
+Or set `routeway_api_key`. Toggle with `/toggle-free-routeway`; `/probe-free-routeway` checks availability.
 
 ### OpenGateway
 
@@ -226,13 +226,13 @@ Qoder has a basic Community/free tier and premium models that consume plan credi
 Authenticate with either method:
 
 ```text
-/login qoder
+/login free-qoder
 ```
 
 - Browser OAuth uses Qoder's device/PKCE flow.
 - PAT authentication can use `QODER_PERSONAL_ACCESS_TOKEN` or the alias `QODER_PAT`.
 
-`/toggle-qoder` switches between basic and all Qoder models. Time-bound 0.0x-credit promos (e.g. Qwen3.8-Flash, Sep 18-30 2026) are captured in `PROMO_FREE_MODELS` in `providers/qoder/models.ts` with an exclusive expiry, so the free flag lapses automatically with no follow-up change. Qoder's API remains OpenAI-compatible, while its authentication and custom stream integration remain Qoder-specific.
+`/toggle-free-qoder` switches between basic and all Qoder models. Time-bound 0.0x-credit promos (e.g. Qwen3.8-Flash, Sep 18-30 2026) are captured in `PROMO_FREE_MODELS` in `providers/qoder/models.ts` with an exclusive expiry, so the free flag lapses automatically with no follow-up change. Qoder's API remains OpenAI-compatible, while its authentication and custom stream integration remain Qoder-specific.
 
 ## Pi built-in providers
 

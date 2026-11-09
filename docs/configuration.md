@@ -54,7 +54,7 @@ Example file:
 }
 ```
 
-Qoder does not use a pi-free config API-key field. Authenticate with `/login qoder`, or set `QODER_PERSONAL_ACCESS_TOKEN` (with `QODER_PAT` as an alias) before login. Pi's built-in OpenRouter and OpenCode providers use Pi's auth handling; their environment variables are `OPENROUTER_API_KEY` and `OPENCODE_API_KEY`.
+Qoder does not use a pi-free config API-key field. Authenticate with `/login free-qoder`, or set `QODER_PERSONAL_ACCESS_TOKEN` (with `QODER_PAT` as an alias) before login. Pi's built-in OpenRouter and OpenCode providers use Pi's auth handling; their environment variables are `OPENROUTER_API_KEY` and `OPENCODE_API_KEY`.
 
 NVIDIA, Together, Mistral, Groq, Cerebras, xAI, and Hugging Face are Pi-built-in providers rather than pi-free registrations. Use Pi's documented environment variables for them; pi-free does not maintain their catalogs or config keys.
 
@@ -63,12 +63,12 @@ NVIDIA, Together, Mistral, Groq, Cerebras, xAI, and Hugging Face are Pi-built-in
 ```json
 {
   "free_only": true,
-  "model_view_overrides": { "kilo": "all" },
+  "model_view_overrides": { "free-kilo": "all" },
   "stepfun_show_paid": true
 }
 ```
 
-`free_only` controls the global filter. An explicit per-provider choice wins over the global default, otherwise the provider follows it; `/toggle-free` flips the global flag and clears all per-provider choices so the new default applies uniformly. Explicit choices live in `model_view_overrides` (written by `/toggle-<provider>`, never by hand) — a legacy `<provider>_show_paid: true` still counts as an explicit "show all" for upgrades, but `false` values are template defaults and no longer meaningful on their own. StepFun defaults to showing its paid catalog because the Step Plan catalog has no free models; hide it with `/toggle-stepfun`, `"model_view_overrides": {"stepfun": "free"}`, or `STEPFUN_SHOW_PAID=false`. Environment flags use the uppercase form, for example `PI_FREE_ONLY`, `KILO_SHOW_PAID`, and `QODER_SHOW_PAID`. The legacy `kilo_free_only` setting is also supported as `PI_FREE_KILO_FREE_ONLY`.
+`free_only` controls the global filter. An explicit per-provider choice wins over the global default, otherwise the provider follows it; `/toggle-free` flips the global flag and clears all per-provider choices so the new default applies uniformly. Explicit choices live in `model_view_overrides` (written by `/toggle-<provider>`, never by hand) — a legacy `<provider>_show_paid: true` still counts as an explicit "show all" for upgrades, but `false` values are template defaults and no longer meaningful on their own. StepFun defaults to showing its paid catalog because the Step Plan catalog has no free models; hide it with `/toggle-free-stepfun`, `"model_view_overrides": {"stepfun": "free"}`, or `STEPFUN_SHOW_PAID=false`. Environment flags use the uppercase form, for example `PI_FREE_ONLY`, `KILO_SHOW_PAID`, and `QODER_SHOW_PAID`. The legacy `kilo_free_only` setting is also supported as `PI_FREE_KILO_FREE_ONLY`.
 
 ### Hidden models
 

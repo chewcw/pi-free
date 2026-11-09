@@ -47,16 +47,16 @@ Press `Ctrl+L` to open the model picker. The global free-only setting is enabled
 Cline exposes a public catalog before login. Kilo requires an OAuth credential or API key for authenticated refreshes and chat:
 
 ```text
-/login cline
-/login kilo
+/login free-cline
+/login free-kilo
 ```
 
-Qoder supports `/login qoder` with PAT or browser OAuth, then `/toggle-qoder` switches between its basic free tier and full catalog.
+Qoder supports `/login free-qoder` with PAT or browser OAuth, then `/toggle-free-qoder` switches between its basic free tier and full catalog.
 
 ### Toggle between free and paid
 
 ```text
-/toggle-kilo
+/toggle-free-kilo
 /toggle-openrouter
 /toggle-free
 /toggle-auto-fallback
