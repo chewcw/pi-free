@@ -689,3 +689,25 @@ describe("model view overrides", () => {
 		expect("opencode_free_show_paid" in written).toBe(false);
 	});
 });
+
+describe("legacy provider ID migration", () => {
+	it("migrates legacy provider IDs in free.json maps on read", async () => {
+		vi.stubEnv("HOME", "/tmp");
+		const fs = await import("node:fs");
+		const { __mockData } = fs as any;
+		__mockData.set(
+			configPath(),
+			JSON.stringify({
+				model_view_overrides: { kilo: "all" },
+				hidden_models: ["kilo/some-model"],
+				auto_fallback_providers: ["cline"],
+			}),
+		);
+		const { loadConfigFile } = await import("../config.ts");
+		const cfg = loadConfigFile();
+		expect(cfg.model_view_overrides?.["free-kilo"]).toBe("all");
+		expect(cfg.model_view_overrides?.["kilo"]).toBeUndefined();
+		expect(cfg.hidden_models).toContain("free-kilo/some-model");
+		expect(cfg.auto_fallback_providers).toContain("free-cline");
+	});
+});
