@@ -7,31 +7,31 @@
 // Provider names (unique providers NOT built into pi)
 // =============================================================================
 
-export const PROVIDER_KILO = "kilo";
-export const PROVIDER_CLINE = "cline";
-export const PROVIDER_OLLAMA = "ollama-cloud";
-export const PROVIDER_ZENMUX = "zenmux";
-export const PROVIDER_LLM7 = "llm7";
-export const PROVIDER_DEEPINFRA = "deepinfra";
-export const PROVIDER_SAMBANOVA = "sambanova";
-export const PROVIDER_NOVITA = "novita";
-export const PROVIDER_ROUTEWAY = "routeway";
-export const PROVIDER_OPENGATEWAY = "opengateway";
-export const PROVIDER_TOKENROUTER = "tokenrouter";
-export const PROVIDER_ANYAPI = "anyapi";
-export const PROVIDER_BAI = "bai";
-export const PROVIDER_ORCAROUTER = "orcarouter";
-export const PROVIDER_XKIRO = "xkiro";
-export const PROVIDER_QODER = "qoder";
-export const PROVIDER_FASTROUTER = "fastrouter";
-export const PROVIDER_REQUESTY = "requesty";
-export const PROVIDER_STEPFUN = "stepfun";
-export const PROVIDER_GMI = "gmi";
-export const PROVIDER_AGNES = "agnes";
-export const PROVIDER_VENICE = "venice";
-export const PROVIDER_INFRON = "infron";
-export const PROVIDER_MERGE = "merge";
-export const PROVIDER_COMMANDCODE = "commandcode";
+export const PROVIDER_KILO = "free-kilo";
+export const PROVIDER_CLINE = "free-cline";
+export const PROVIDER_OLLAMA = "free-ollama-cloud";
+export const PROVIDER_ZENMUX = "free-zenmux";
+export const PROVIDER_LLM7 = "free-llm7";
+export const PROVIDER_DEEPINFRA = "free-deepinfra";
+export const PROVIDER_SAMBANOVA = "free-sambanova";
+export const PROVIDER_NOVITA = "free-novita";
+export const PROVIDER_ROUTEWAY = "free-routeway";
+export const PROVIDER_OPENGATEWAY = "free-opengateway";
+export const PROVIDER_TOKENROUTER = "free-tokenrouter";
+export const PROVIDER_ANYAPI = "free-anyapi";
+export const PROVIDER_BAI = "free-bai";
+export const PROVIDER_ORCAROUTER = "free-orcarouter";
+export const PROVIDER_XKIRO = "free-xkiro";
+export const PROVIDER_QODER = "free-qoder";
+export const PROVIDER_FASTROUTER = "free-fastrouter";
+export const PROVIDER_REQUESTY = "free-requesty";
+export const PROVIDER_STEPFUN = "free-stepfun";
+export const PROVIDER_GMI = "free-gmi";
+export const PROVIDER_AGNES = "free-agnes";
+export const PROVIDER_VENICE = "free-venice";
+export const PROVIDER_INFRON = "free-infron";
+export const PROVIDER_MERGE = "free-merge";
+export const PROVIDER_COMMANDCODE = "free-commandcode";
 
 // Built-in pi providers that pi-free wraps with toggles
 export const PROVIDER_OPENROUTER = "openrouter";
@@ -40,6 +40,63 @@ export const PROVIDER_OPENCODE = "opencode";
 // provider is registered as "opencode"; see lib/built-in-toggle.ts).
 export const PROVIDER_OPENCODE_FREE = "opencode-free";
 export const PROVIDER_OPENCODE_GO = "opencode-go";
+
+// Plugin registration IDs carry the free- prefix so they can never collide
+// with an upstream provider ID of the same name. This is the complete list
+// of provider IDs pi-free registers with Pi.
+export const FREE_PROVIDER_PREFIX = "free-";
+export const PLUGIN_PROVIDER_IDS: readonly string[] = [
+	PROVIDER_KILO,
+	PROVIDER_CLINE,
+	PROVIDER_OLLAMA,
+	PROVIDER_ZENMUX,
+	PROVIDER_LLM7,
+	PROVIDER_DEEPINFRA,
+	PROVIDER_SAMBANOVA,
+	PROVIDER_NOVITA,
+	PROVIDER_ROUTEWAY,
+	PROVIDER_OPENGATEWAY,
+	PROVIDER_TOKENROUTER,
+	PROVIDER_ANYAPI,
+	PROVIDER_BAI,
+	PROVIDER_ORCAROUTER,
+	PROVIDER_XKIRO,
+	PROVIDER_QODER,
+	PROVIDER_FASTROUTER,
+	PROVIDER_REQUESTY,
+	PROVIDER_STEPFUN,
+	PROVIDER_GMI,
+	PROVIDER_AGNES,
+	PROVIDER_VENICE,
+	PROVIDER_INFRON,
+	PROVIDER_MERGE,
+	PROVIDER_COMMANDCODE,
+];
+// Pi built-in IDs pi-free wraps but does not register. They stay unprefixed.
+export const BUILT_IN_PROVIDER_IDS: readonly string[] = [
+	PROVIDER_OPENROUTER,
+	PROVIDER_OPENCODE,
+	PROVIDER_OPENCODE_FREE,
+	PROVIDER_OPENCODE_GO,
+];
+// Legacy pre-prefix ID (bare upstream name) to current registered ID.
+export const LEGACY_PROVIDER_ID_MAP: ReadonlyMap<string, string> = new Map(
+	PLUGIN_PROVIDER_IDS.map((id) => [id.slice(FREE_PROVIDER_PREFIX.length), id]),
+);
+/** Prefix a bare provider ID with free-, keeping existing prefixes intact. */
+export function toFreeProviderId(bare: string): string {
+	return bare.startsWith(FREE_PROVIDER_PREFIX)
+		? bare
+		: FREE_PROVIDER_PREFIX + bare;
+}
+/** Map a legacy bare provider ID to its current ID. Unknown IDs pass through. */
+export function normalizeLegacyProviderId(id: string): string {
+	return LEGACY_PROVIDER_ID_MAP.get(id) ?? id;
+}
+/** True when the ID is a provider ID registered by pi-free. */
+export function isPluginProviderId(id: string): boolean {
+	return PLUGIN_PROVIDER_IDS.includes(id);
+}
 
 // =============================================================================
 // Provider base URLs
