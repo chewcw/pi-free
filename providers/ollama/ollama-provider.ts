@@ -350,7 +350,7 @@ export function registerOllamaProvider(
 	// background accessibility probe without reintroducing a second catalog fetch.
 	pi.on(
 		"session_start",
-		wrapSessionStartHandler("ollama-cloud", () => {
+		wrapSessionStartHandler(PROVIDER_OLLAMA, () => {
 			const task = runProbeInBackground(currentModels());
 			if (task) {
 				trackDetachedSessionStart("ollama-cloud-probe", task);

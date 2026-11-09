@@ -48,7 +48,7 @@ export default function sambanovaProvider(pi: ExtensionAPI): Promise<void> {
 		getShowPaid: getSambanovaShowPaid,
 		fetchModels: async (apiKey, signal) => {
 			const models = await fetchOpenAICompatibleModels(
-				"sambanova",
+				PROVIDER_SAMBANOVA,
 				BASE_URL_SAMBANOVA,
 				apiKey,
 				{ maxTokens: 8_192 },
