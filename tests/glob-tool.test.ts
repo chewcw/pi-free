@@ -100,7 +100,7 @@ describe("addOpenCodeFreeGateTools", () => {
 
 	it("does not touch other providers", () => {
 		const event = { systemPromptOptions: { selectedTools: ["read"] } };
-		addOpenCodeFreeGateTools(event, "zenmux");
+		addOpenCodeFreeGateTools(event, "free-zenmux");
 		addOpenCodeFreeGateTools(event, undefined);
 		expect(event.systemPromptOptions.selectedTools).toEqual(["read"]);
 	});

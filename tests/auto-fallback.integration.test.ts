@@ -165,7 +165,7 @@ beforeEach(() => {
 		{ id: "llama-3.1-8b", name: "llama-3.1-8b" },
 		{ id: "llama-3.3-70b", name: "llama-3.3-70b" },
 	];
-	mockProviderRegistry.set("kilo", {
+	mockProviderRegistry.set("free-kilo", {
 		stored: { free: kiloFree, all: kiloFree },
 		reRegister: vi.fn(),
 	});
@@ -181,7 +181,7 @@ afterEach(() => {
 
 describe("auto-fallback integration", () => {
 	it("registers the three slash commands (Q17 = B)", () => {
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		createAutoFallback().register(
 			pi as unknown as Parameters<
 				ReturnType<typeof createAutoFallback>["register"]
@@ -202,7 +202,7 @@ describe("auto-fallback integration", () => {
 	});
 
 	it("switches model when the run settles with a classified error", async () => {
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		const handle = createAutoFallback();
 		handle.register(
 			pi as unknown as Parameters<
@@ -214,13 +214,13 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"after_provider_response",
 			{ status: 429, headers: {} },
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
@@ -228,19 +228,19 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
@@ -251,7 +251,7 @@ describe("auto-fallback integration", () => {
 	});
 
 	it("does NOT switch on unrecoverable errors (Q15)", async () => {
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		const handle = createAutoFallback();
 		handle.register(
 			pi as unknown as Parameters<
@@ -263,7 +263,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
@@ -271,19 +271,19 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "Invalid API key",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		expect(pi.setModel).not.toHaveBeenCalled();
@@ -301,7 +301,7 @@ describe("auto-fallback integration", () => {
 			autoContinue: true,
 			autoContinueMax: 3,
 		});
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		const handle = createAutoFallback();
 		handle.register(
 			pi as unknown as Parameters<
@@ -313,33 +313,33 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		expect(pi.setModel).not.toHaveBeenCalled();
 	});
 
 	it("/toggle-auto-fallback persists the new state (Q6)", async () => {
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		createAutoFallback().register(
 			pi as unknown as Parameters<
 				ReturnType<typeof createAutoFallback>["register"]
 			>[0],
 		);
 
-		const ctx = buildMockCtx({ provider: "kilo", id: "gpt-4o" });
+		const ctx = buildMockCtx({ provider: "free-kilo", id: "gpt-4o" });
 		await pi.commands["toggle-auto-fallback"]!.handler([], ctx);
 		expect(mockSaveConfig).toHaveBeenCalledWith({ auto_fallback: false });
 	});
 
 	it("/reset-fallback-blacklist clears every entry (Q10 = A escape hatch)", async () => {
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		const handle = createAutoFallback();
 		handle.register(
 			pi as unknown as Parameters<
@@ -351,7 +351,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
@@ -359,24 +359,24 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		const statusBefore = handle.getStatus();
 		expect(statusBefore.blacklistSize).toBeGreaterThanOrEqual(1);
 
-		const ctx = buildMockCtx({ provider: "kilo", id: "gpt-4o" });
+		const ctx = buildMockCtx({ provider: "free-kilo", id: "gpt-4o" });
 		await pi.commands["reset-fallback-blacklist"]!.handler([], ctx);
 
 		const statusAfter = handle.getStatus();
@@ -389,7 +389,7 @@ describe("auto-fallback integration", () => {
 		// selection attempt finds nothing, so it must broaden to global and
 		// switch to the other provider instead of silently doing nothing.
 		mockProviderRegistry.clear();
-		mockProviderRegistry.set("kilo", {
+		mockProviderRegistry.set("free-kilo", {
 			stored: {
 				free: [{ id: "gpt-4o", name: "gpt-4o" }],
 				all: [{ id: "gpt-4o", name: "gpt-4o" }],
@@ -404,7 +404,7 @@ describe("auto-fallback integration", () => {
 			reRegister: vi.fn(),
 		});
 
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		const handle = createAutoFallback();
 		handle.register(
 			pi as unknown as Parameters<
@@ -416,7 +416,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
@@ -424,19 +424,19 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
@@ -453,7 +453,7 @@ describe("auto-fallback integration", () => {
 		// pool contains `aaa` (NO auth) and `zzz` (has auth). `aaa` sorts first
 		// but must be skipped, so the switch lands on `zzz`.
 		mockProviderRegistry.clear();
-		mockProviderRegistry.set("kilo", {
+		mockProviderRegistry.set("free-kilo", {
 			stored: {
 				free: [{ id: "gpt-4o", name: "gpt-4o" }],
 				all: [{ id: "gpt-4o", name: "gpt-4o" }],
@@ -475,7 +475,7 @@ describe("auto-fallback integration", () => {
 			reRegister: vi.fn(),
 		});
 
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		const handle = createAutoFallback();
 		handle.register(
 			pi as unknown as Parameters<
@@ -487,7 +487,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }, ["aaa"]),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }, ["aaa"]),
 		);
 		await emit(
 			pi,
@@ -495,19 +495,19 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }, ["aaa"]),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }, ["aaa"]),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }, ["aaa"]),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }, ["aaa"]),
 		);
 
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
@@ -520,7 +520,7 @@ describe("auto-fallback integration", () => {
 	});
 
 	it("auto-continues by replaying the captured prompt after a switch (Q-C)", async () => {
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		createAutoFallback().register(
 			pi as unknown as Parameters<
 				ReturnType<typeof createAutoFallback>["register"]
@@ -531,14 +531,14 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		// Capture the user's prompt via before_agent_start.
 		await emit(
 			pi,
 			"before_agent_start",
 			{ prompt: "write a poem about pi", images: [] },
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
@@ -546,20 +546,20 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		// The switch + strike happen at settle time.
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
 
@@ -569,7 +569,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 
 		expect(pi.sendUserMessage).toHaveBeenCalledTimes(1);
@@ -593,7 +593,7 @@ describe("auto-fallback integration", () => {
 			autoContinue: false,
 			autoContinueMax: 3,
 		});
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		createAutoFallback().register(
 			pi as unknown as Parameters<
 				ReturnType<typeof createAutoFallback>["register"]
@@ -604,13 +604,13 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"before_agent_start",
 			{ prompt: "do thing", images: [] },
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
@@ -618,19 +618,19 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
 
@@ -638,7 +638,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 
 		expect(pi.sendUserMessage).not.toHaveBeenCalled();
@@ -656,7 +656,7 @@ describe("auto-fallback integration", () => {
 			autoContinue: true,
 			autoContinueMax: 2, // tight budget so we hit the cap quickly
 		});
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		createAutoFallback().register(
 			pi as unknown as Parameters<
 				ReturnType<typeof createAutoFallback>["register"]
@@ -669,13 +669,13 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"before_agent_start",
 			{ prompt: "retry me", images: [] },
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
@@ -683,25 +683,25 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		expect(pi.sendUserMessage).toHaveBeenCalledTimes(1);
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
@@ -714,19 +714,19 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "claude-sonnet",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		await emit(
 			pi,
@@ -770,7 +770,7 @@ describe("auto-fallback integration", () => {
 	});
 
 	it("resets the auto-continue budget when the fallback model recovers (Q-C)", async () => {
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		createAutoFallback().register(
 			pi as unknown as Parameters<
 				ReturnType<typeof createAutoFallback>["register"]
@@ -781,13 +781,13 @@ describe("auto-fallback integration", () => {
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"before_agent_start",
 			{ prompt: "hello", images: [] },
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		// First failure -> switch to claude-sonnet + auto-replay.
@@ -797,25 +797,25 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "gpt-4o",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		expect(pi.sendUserMessage).toHaveBeenCalledTimes(1);
 
@@ -827,18 +827,18 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "claude-sonnet",
 					stopReason: "stop",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 
 		// New, independent failure later -> switch + auto-replay again
@@ -847,7 +847,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"before_agent_start",
 			{ prompt: "hello again", images: [] },
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		await emit(
 			pi,
@@ -855,19 +855,19 @@ describe("auto-fallback integration", () => {
 			{
 				message: {
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "claude-sonnet",
 					stopReason: "error",
 					errorMessage: "rate limit exceeded",
 				},
 			},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildMockCtx({ provider: "kilo", id: "claude-sonnet" }),
+			buildMockCtx({ provider: "free-kilo", id: "claude-sonnet" }),
 		);
 		// The switch lands on sambanova; its settle dispatches the replay.
 		await emit(
@@ -933,7 +933,7 @@ describe("auto-fallback integration", () => {
 			autoContinue: true,
 			autoContinueMax: 3,
 		});
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		const handle = createAutoFallback();
 		handle.register(
 			pi as unknown as Parameters<
@@ -945,13 +945,13 @@ describe("auto-fallback integration", () => {
 			pi,
 			"after_provider_response",
 			{ status: 429, headers: {} },
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		await emitFailureMessage(
 			pi,
-			"kilo",
+			"free-kilo",
 			"gpt-4o",
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 		// The session is replaced before agent_settled runs: every ctx.ui
 		// touch below throws stale. The handler must not propagate it (Pi
@@ -960,7 +960,7 @@ describe("auto-fallback integration", () => {
 			pi,
 			"agent_settled",
 			{},
-			buildStaleUiCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildStaleUiCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
@@ -974,11 +974,11 @@ describe("auto-fallback integration", () => {
 		// the settle lands on the no-candidate notify branch.
 		mockProviderRegistry.clear();
 		const solo = [{ id: "solo", name: "solo" }];
-		mockProviderRegistry.set("kilo", {
+		mockProviderRegistry.set("free-kilo", {
 			stored: { free: solo, all: solo },
 			reRegister: vi.fn(),
 		});
-		const pi = buildMockPi({ provider: "kilo", id: "solo" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "solo" });
 		createAutoFallback().register(
 			pi as unknown as Parameters<
 				ReturnType<typeof createAutoFallback>["register"]
@@ -989,19 +989,19 @@ describe("auto-fallback integration", () => {
 			pi,
 			"after_provider_response",
 			{ status: 429, headers: {} },
-			buildMockCtx({ provider: "kilo", id: "solo" }),
+			buildMockCtx({ provider: "free-kilo", id: "solo" }),
 		);
 		await emitFailureMessage(
 			pi,
-			"kilo",
+			"free-kilo",
 			"solo",
-			buildMockCtx({ provider: "kilo", id: "solo" }),
+			buildMockCtx({ provider: "free-kilo", id: "solo" }),
 		);
 		await emit(
 			pi,
 			"agent_settled",
 			{},
-			buildStaleUiCtx({ provider: "kilo", id: "solo" }),
+			buildStaleUiCtx({ provider: "free-kilo", id: "solo" }),
 		);
 
 		expect(pi.setModel).not.toHaveBeenCalled();
@@ -1093,13 +1093,13 @@ describe("recovery restore vs explicit user selection (#576)", () => {
 		// TLC FallbackA trace: fail A -> switch B, clean on B dispatches
 		// restore(A), user re-selects elsewhere, restore lands anyway.
 		autoRestoreConfig();
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		register(pi);
 		await emit(
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		// Hold the recovery restore in flight so the user pick lands first.
@@ -1115,9 +1115,9 @@ describe("recovery restore vs explicit user selection (#576)", () => {
 			})
 			.mockImplementation(async () => true);
 
-		await failOn(pi, "kilo", "gpt-4o"); // switch to claude-sonnet
+		await failOn(pi, "free-kilo", "gpt-4o"); // switch to claude-sonnet
 		expect(pi.setModel).toHaveBeenCalledTimes(1);
-		await cleanOn(pi, "kilo", "claude-sonnet"); // dispatches restore (held)
+		await cleanOn(pi, "free-kilo", "claude-sonnet"); // dispatches restore (held)
 
 		// User explicitly picks elsewhere while the restore is in flight.
 		await emit(
@@ -1142,13 +1142,13 @@ describe("recovery restore vs explicit user selection (#576)", () => {
 		// on X switches to Y (marker = X) -> stale landing must preserve it
 		// so the next clean run still restores X.
 		autoRestoreConfig();
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		register(pi);
 		await emit(
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
 		let releaseRestore!: () => void;
@@ -1163,8 +1163,8 @@ describe("recovery restore vs explicit user selection (#576)", () => {
 			})
 			.mockImplementation(async () => true);
 
-		await failOn(pi, "kilo", "gpt-4o"); // switch to claude-sonnet
-		await cleanOn(pi, "kilo", "claude-sonnet"); // dispatches restore (held)
+		await failOn(pi, "free-kilo", "gpt-4o"); // switch to claude-sonnet
+		await cleanOn(pi, "free-kilo", "claude-sonnet"); // dispatches restore (held)
 		await emit(
 			pi,
 			"model_select",
@@ -1191,22 +1191,22 @@ describe("recovery restore vs explicit user selection (#576)", () => {
 		// Guard: the repair path must stay quiet on the undisturbed flow.
 		// Passes pre-fix too; pins the no-over-repair direction.
 		autoRestoreConfig();
-		const pi = buildMockPi({ provider: "kilo", id: "gpt-4o" });
+		const pi = buildMockPi({ provider: "free-kilo", id: "gpt-4o" });
 		register(pi);
 		await emit(
 			pi,
 			"session_start",
 			{},
-			buildMockCtx({ provider: "kilo", id: "gpt-4o" }),
+			buildMockCtx({ provider: "free-kilo", id: "gpt-4o" }),
 		);
 
-		await failOn(pi, "kilo", "gpt-4o");
-		await cleanOn(pi, "kilo", "claude-sonnet");
+		await failOn(pi, "free-kilo", "gpt-4o");
+		await cleanOn(pi, "free-kilo", "claude-sonnet");
 		await flushAsyncWork();
 
 		expect(pi.setModel).toHaveBeenCalledTimes(2);
 		expect(lastSetModel(pi)).toMatchObject({
-			provider: "kilo",
+			provider: "free-kilo",
 			id: "gpt-4o",
 		});
 	});

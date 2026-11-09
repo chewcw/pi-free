@@ -58,8 +58,8 @@ async function fireSessionStart(pi: ReturnType<typeof mockPi>, ctx: unknown) {
 describe("native refresh nudge", () => {
 	it("refreshes only the opted-in provider ids", async () => {
 		const pi = mockPi();
-		registerNativeProviderRefresh(pi as never, "kilo");
-		registerNativeProviderRefresh(pi as never, "kilo");
+		registerNativeProviderRefresh(pi as never, "free-kilo");
+		registerNativeProviderRefresh(pi as never, "free-kilo");
 		mockRefresh.mockResolvedValue({ aborted: false, errors: new Map() });
 
 		await fireSessionStart(pi, mockCtx());
@@ -67,7 +67,7 @@ describe("native refresh nudge", () => {
 		expect(mockRefresh).toHaveBeenCalledTimes(1);
 		expect(mockRefresh).toHaveBeenCalledWith({
 			allowNetwork: true,
-			providers: ["kilo"],
+			providers: ["free-kilo"],
 		});
 	});
 
@@ -78,9 +78,9 @@ describe("native refresh nudge", () => {
 		// their pre-fix stale store — non-chat entries survived the #551
 		// filter because the refresh that would have dropped them never ran.
 		const pi = mockPi();
-		registerNativeProviderRefresh(pi as never, "kilo");
-		registerNativeProviderRefresh(pi as never, "zenmux");
-		registerNativeProviderRefresh(pi as never, "cline");
+		registerNativeProviderRefresh(pi as never, "free-kilo");
+		registerNativeProviderRefresh(pi as never, "free-zenmux");
+		registerNativeProviderRefresh(pi as never, "free-cline");
 		mockRefresh.mockResolvedValue({ aborted: false, errors: new Map() });
 
 		await fireSessionStart(pi, mockCtx());
@@ -88,7 +88,7 @@ describe("native refresh nudge", () => {
 		expect(mockRefresh).toHaveBeenCalledTimes(1);
 		expect(mockRefresh).toHaveBeenCalledWith({
 			allowNetwork: true,
-			providers: ["kilo", "zenmux", "cline"],
+			providers: ["free-kilo", "free-zenmux", "free-cline"],
 		});
 		// One session_start handler per runner — no re-registration storm.
 		expect(pi.on).toHaveBeenCalledTimes(1);
@@ -96,10 +96,10 @@ describe("native refresh nudge", () => {
 
 	it("ignores other providers' errors (e.g. missing OPENCODE_API_KEY)", async () => {
 		const pi = mockPi();
-		registerNativeProviderRefresh(pi as never, "kilo");
+		registerNativeProviderRefresh(pi as never, "free-kilo");
 		mockRefresh.mockImplementation(async () => {
 			// Own provider completed (refresh-ok stamp); foreign errors are noise.
-			recordNativeRefreshOk("kilo", 62);
+			recordNativeRefreshOk("free-kilo", 62);
 			return {
 				aborted: false,
 				errors: new Map([
@@ -118,10 +118,10 @@ describe("native refresh nudge", () => {
 
 	it("fails loudly on its own providers' errors", async () => {
 		const pi = mockPi();
-		registerNativeProviderRefresh(pi as never, "kilo");
+		registerNativeProviderRefresh(pi as never, "free-kilo");
 		mockRefresh.mockResolvedValue({
 			aborted: false,
-			errors: new Map([["kilo", new Error("boom")]]),
+			errors: new Map([["free-kilo", new Error("boom")]]),
 		});
 
 		await fireSessionStart(pi, mockCtx());
@@ -135,7 +135,7 @@ describe("native refresh nudge", () => {
 		// TLC RefreshB: 1 initial + 3 retries against the storm budget;
 		// afterwards the catalogs stay as-is until the next refresh.
 		const pi = mockPi();
-		registerNativeProviderRefresh(pi as never, "kilo");
+		registerNativeProviderRefresh(pi as never, "free-kilo");
 		mockRefresh.mockResolvedValue({ aborted: true, errors: new Map() });
 
 		await fireSessionStart(pi, mockCtx());
@@ -157,7 +157,7 @@ describe("native refresh nudge", () => {
 
 	it("drops a stale retry ctx quietly instead of warning", async () => {
 		const pi = mockPi();
-		registerNativeProviderRefresh(pi as never, "kilo");
+		registerNativeProviderRefresh(pi as never, "free-kilo");
 		mockRefresh.mockResolvedValue({ aborted: true, errors: new Map() });
 
 		let accesses = 0;

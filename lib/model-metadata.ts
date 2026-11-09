@@ -128,10 +128,15 @@ function findProviderModels(
 	catalog: Record<string, ModelsDevProvider>,
 	providerId: string,
 ): Record<string, ModelsDevModel> | undefined {
+	// Registered IDs carry a free- prefix; models.dev keys use bare names.
+	const bareId = providerId.replace(/^free-/, "");
 	const ids = new Set(
-		[providerId, MODELS_DEV_PROVIDER_ALIASES[providerId]].filter(
-			(id): id is string => Boolean(id),
-		),
+		[
+			providerId,
+			bareId,
+			MODELS_DEV_PROVIDER_ALIASES[providerId],
+			MODELS_DEV_PROVIDER_ALIASES[bareId],
+		].filter((id): id is string => Boolean(id)),
 	);
 
 	for (const id of ids) {

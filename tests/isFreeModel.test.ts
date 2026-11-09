@@ -32,7 +32,7 @@ function createModel(
 }
 
 describe("isFreeModel - Route A (pricing-exposed providers)", () => {
-	const pricingExposedProviders = ["openrouter", "opencode", "kilo", "cline"];
+	const pricingExposedProviders = ["openrouter", "opencode", "free-kilo", "free-cline"];
 
 	it.each(pricingExposedProviders)(
 		"%s: returns true when cost is zero",
@@ -245,7 +245,7 @@ describe("isFreeModel - edge cases", () => {
 			maxTokens: 2048,
 		} as ProviderModelConfig; // No cost property
 
-		expect(isFreeModel({ ...model, provider: "kilo" })).toBe(true);
+		expect(isFreeModel({ ...model, provider: "free-kilo" })).toBe(true);
 	});
 
 	it("handles missing cost for non-pricing provider (uses name)", () => {
@@ -271,7 +271,7 @@ describe("isFreeModel - _pricingKnown guard (Route A)", () => {
 		];
 		expect(
 			isFreeModel(
-				{ ...model, provider: "zenmux", _pricingKnown: false },
+				{ ...model, provider: "free-zenmux", _pricingKnown: false },
 				allModels,
 			),
 		).toBe(false);
@@ -284,7 +284,7 @@ describe("isFreeModel - _pricingKnown guard (Route A)", () => {
 		];
 		expect(
 			isFreeModel(
-				{ ...model, provider: "zenmux", _pricingKnown: false },
+				{ ...model, provider: "free-zenmux", _pricingKnown: false },
 				allModels,
 			),
 		).toBe(true);
@@ -336,7 +336,7 @@ describe("isFreeModel - _pricingKnown guard (Route A)", () => {
 		];
 		expect(
 			isFreeModel(
-				{ ...model, provider: "kilo", _pricingKnown: undefined },
+				{ ...model, provider: "free-kilo", _pricingKnown: undefined },
 				allModels,
 			),
 		).toBe(true);
@@ -349,7 +349,7 @@ describe("isFreeModel - _pricingKnown guard (Route A)", () => {
 		];
 		expect(
 			isFreeModel(
-				{ ...model, provider: "kilo", _pricingKnown: undefined },
+				{ ...model, provider: "free-kilo", _pricingKnown: undefined },
 				allModels,
 			),
 		).toBe(true);
@@ -365,7 +365,7 @@ describe("isFreeModel - authoritative free flag", () => {
 		expect(
 			isFreeModel({
 				...model,
-				provider: "kilo",
+				provider: "free-kilo",
 				_freeKnown: true,
 				_isFree: true,
 			}),
@@ -377,7 +377,7 @@ describe("isFreeModel - authoritative free flag", () => {
 		expect(
 			isFreeModel({
 				...model,
-				provider: "kilo",
+				provider: "free-kilo",
 				_freeKnown: true,
 				_isFree: false,
 			}),

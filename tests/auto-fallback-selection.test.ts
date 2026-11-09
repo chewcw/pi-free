@@ -19,9 +19,9 @@ import {
 // value through a tiny local function.
 
 const ALL: CandidateSource[] = [
-	{ provider: "kilo", modelId: "gpt-4o", name: "gpt-4o" },
-	{ provider: "kilo", modelId: "claude-sonnet", name: "claude-sonnet" },
-	{ provider: "kilo", modelId: "llama-3.3-70b", name: "llama-3.3-70b" },
+	{ provider: "free-kilo", modelId: "gpt-4o", name: "gpt-4o" },
+	{ provider: "free-kilo", modelId: "claude-sonnet", name: "claude-sonnet" },
+	{ provider: "free-kilo", modelId: "llama-3.3-70b", name: "llama-3.3-70b" },
 	{ provider: "sambanova", modelId: "llama-3.1-8b", name: "llama-3.1-8b" },
 	{ provider: "openrouter", modelId: "gpt-4o-mini", name: "gpt-4o-mini" },
 ];
@@ -29,13 +29,13 @@ const ALL: CandidateSource[] = [
 describe("selectFallbackModel — provider scope (default)", () => {
 	it("only considers candidates in the same provider", () => {
 		const bl = createBlacklist();
-		const winner = selectFallbackModel("kilo", "gpt-4o", {
+		const winner = selectFallbackModel("free-kilo", "gpt-4o", {
 			scope: "provider",
 			blacklist: bl,
 			getCandidates: () => ALL,
 		});
 		expect(winner).not.toBeNull();
-		expect(winner!.provider).toBe("kilo");
+		expect(winner!.provider).toBe("free-kilo");
 		expect(winner!.modelId).not.toBe("gpt-4o"); // excludes the failing one
 	});
 
@@ -66,7 +66,7 @@ describe("selectFallbackModel — global scope", () => {
 describe("selectFallbackModel — whitelist scope", () => {
 	it("only considers the listed providers", () => {
 		const bl = createBlacklist();
-		const winner = selectFallbackModel("kilo", "gpt-4o", {
+		const winner = selectFallbackModel("free-kilo", "gpt-4o", {
 			scope: "whitelist",
 			whitelist: ["openrouter"],
 			blacklist: bl,
@@ -78,7 +78,7 @@ describe("selectFallbackModel — whitelist scope", () => {
 
 	it("returns null when the whitelist is empty", () => {
 		const bl = createBlacklist();
-		const winner = selectFallbackModel("kilo", "gpt-4o", {
+		const winner = selectFallbackModel("free-kilo", "gpt-4o", {
 			scope: "whitelist",
 			whitelist: [],
 			blacklist: bl,
@@ -91,7 +91,7 @@ describe("selectFallbackModel — whitelist scope", () => {
 		const bl = createBlacklist();
 		const winner = selectFallbackModel("sambanova", "llama-3.1-8b", {
 			scope: "whitelist",
-			whitelist: ["kilo"], // sambanova is failing, kilo is whitelisted
+			whitelist: ["free-kilo"], // sambanova is failing, kilo is whitelisted
 			blacklist: bl,
 			getCandidates: () => ALL,
 		});
@@ -100,16 +100,16 @@ describe("selectFallbackModel — whitelist scope", () => {
 		// sambanova x is not in the candidate set, AND the failing
 		// sambanova/x is excluded by identity check anyway.
 		expect(winner).not.toBeNull();
-		expect(winner!.provider).toBe("kilo");
+		expect(winner!.provider).toBe("free-kilo");
 	});
 });
 
 describe("selectFallbackModel — blacklist exclusion", () => {
 	it("skips blacklisted candidates", () => {
 		const bl = createBlacklist();
-		bl.recordFailure(modelKey("kilo", "claude-sonnet"), "429");
-		bl.recordFailure(modelKey("kilo", "llama-3.3-70b"), "429");
-		const winner = selectFallbackModel("kilo", "gpt-4o", {
+		bl.recordFailure(modelKey("free-kilo", "claude-sonnet"), "429");
+		bl.recordFailure(modelKey("free-kilo", "llama-3.3-70b"), "429");
+		const winner = selectFallbackModel("free-kilo", "gpt-4o", {
 			scope: "provider",
 			blacklist: bl,
 			getCandidates: () => ALL,
@@ -134,6 +134,6 @@ describe("selectFallbackModel — current model always excluded", () => {
 
 describe("modelKey", () => {
 	it("joins provider and modelId with a slash", () => {
-		expect(modelKey("kilo", "gpt-4o-mini")).toBe("kilo/gpt-4o-mini");
+		expect(modelKey("free-kilo", "gpt-4o-mini")).toBe("free-kilo/gpt-4o-mini");
 	});
 });

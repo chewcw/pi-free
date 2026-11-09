@@ -66,13 +66,13 @@ function resolveInput() {
 describe("shared-factory providers hide without a key (#530)", () => {
 	it.each([
 		["deepinfra", deepinfraAuth],
-		["novita", novitaAuth],
+		["free-novita", novitaAuth],
 		["routeway", routewayAuth],
 		["sambanova", sambanovaAuth],
-		["commandcode", commandCodeAuth],
+		["free-commandcode", commandCodeAuth],
 		["infron", infronAuth],
-		["venice", veniceAuth],
-		["stepfun", stepfunAuth],
+		["free-venice", veniceAuth],
+		["free-stepfun", stepfunAuth],
 		["anyapi", anyapiAuth],
 		["bai", baiAuth],
 		["opengateway", opengatewayAuth],
@@ -83,9 +83,9 @@ describe("shared-factory providers hide without a key (#530)", () => {
 
 describe("custom-resolver providers hide without a key (#530)", () => {
 	it.each([
-		["kilo", { apiKey: kiloApiKeyAuth }],
+		["free-kilo", { apiKey: kiloApiKeyAuth }],
 		["requesty", requestyAuth],
-		["zenmux", zenmuxAuth],
+		["free-zenmux", zenmuxAuth],
 	])("%s resolves undefined without a key", async (_name, auth) => {
 		expect(await auth.apiKey?.resolve(resolveInput())).toBeUndefined();
 	});
@@ -93,9 +93,9 @@ describe("custom-resolver providers hide without a key (#530)", () => {
 
 describe("keyless allowlist still resolves (cline, fastrouter, llm7)", () => {
 	it.each([
-		["cline", { apiKey: clineApiKeyAuth }],
-		["fastrouter", fastrouterAuth],
-		["llm7", llm7Auth],
+		["free-cline", { apiKey: clineApiKeyAuth }],
+		["free-fastrouter", fastrouterAuth],
+		["free-llm7", llm7Auth],
 	])("%s resolves keyless auth for the public catalog", async (_name, auth) => {
 		const result = await auth.apiKey?.resolve(resolveInput());
 		expect(result).toBeDefined();

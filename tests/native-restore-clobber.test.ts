@@ -4,7 +4,7 @@
  *
  * Recurrence this prevents (live, CommandCode 2026-10-16): session-start
  * refresh fetched 92 models under the global free view, so #519 persisted
- * only the 1 free model to Pi's store; `/toggle-commandcode` then re-registered
+ * only the 1 free model to Pi's store; `/toggle-free-commandcode` then re-registered
  * the provider, Pi answered every registerProvider with a global
  * `allowNetwork:false` refresh (model-runtime.registerNativeProvider), the
  * restore applied the 1-model disk snapshot and `stored.all` collapsed from 92
