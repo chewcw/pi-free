@@ -162,7 +162,7 @@ try {
 	// provider with a pre-run stamp, so no restore may happen.
 	const deliberate = craftSession(cwd, [
 		{ provider: PROVIDER, modelId: target, at: OLD_STAMP },
-		{ provider: "kilo", modelId: "no-such-model", at: OLD_STAMP },
+		{ provider: "free-kilo", modelId: "no-such-model", at: OLD_STAMP },
 	]);
 	await driver.send({ type: "switch_session", sessionPath: deliberate });
 	const kept = await waitModel(

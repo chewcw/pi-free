@@ -61,4 +61,20 @@ describe("plugin provider IDs", () => {
 		if (readFileSync("index.ts", "utf8").includes('"sambanova"')) hits.push("index.ts: sambanova");
 		expect(hits).toEqual([]);
 	});
+
+	it("keeps bare plugin IDs out of scripts", () => {
+		const scripts = ["scripts/rpc-session-check.mjs", "scripts/rpc-restore-check.mjs", "scripts/bench-startup.ts"];
+		const bad: string[] = [];
+		for (const file of scripts) {
+			const text = readFileSync(file, "utf8");
+			for (const id of ["kilo", "cline", "llm7"]) {
+				if (text.includes(`provider: "${id}"` ) || text.includes(`get("${id}")`) ||
+					text.includes(`/toggle-${id}"`) ||
+					text.includes(`provider === "${id}"`)) {
+					bad.push(`${file}: ${id}`);
+				}
+			}
+		}
+		expect(bad).toEqual([]);
+	});
 });
