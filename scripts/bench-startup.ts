@@ -242,13 +242,13 @@ const totalMs = Math.round((t1 - importStart) * 10) / 10;
 // ---------------------------------------------------------------------------
 let kiloOfflineInitMs: number | null = null;
 let kiloOfflineModels = 0;
-const kilo = nativeProviders.get("kilo");
+const kilo = nativeProviders.get("free-kilo");
 if (kilo && typeof kilo.refreshModels === "function") {
 	const seededModels = [0, 1, 2].map((i) => ({
 		id: `kilo-seeded-${i}`,
 		name: `Kilo Seeded Free ${i}`,
 		api: "openai-completions",
-		provider: "kilo",
+		provider: "free-kilo",
 		baseUrl: "https://api.kilo.ai/api/gateway",
 		reasoning: false,
 		input: ["text"],
@@ -291,13 +291,13 @@ const kiloFactoryNetworkCalls = fetchUrls.filter((u) =>
 // ---------------------------------------------------------------------------
 let clineOfflineInitMs: number | null = null;
 let clineOfflineModels = 0;
-const cline = nativeProviders.get("cline");
+const cline = nativeProviders.get("free-cline");
 if (cline && typeof cline.refreshModels === "function") {
 	const seededModels = [0, 1, 2].map((i) => ({
 		id: `cline-seeded-${i}`,
 		name: `Cline Seeded Free ${i}`,
 		api: "openai-completions",
-		provider: "cline",
+		provider: "free-cline",
 		baseUrl: "https://api.cline.bot/api/v1",
 		reasoning: false,
 		input: ["text"],

@@ -272,7 +272,7 @@ describe("show-paid getters", () => {
 		__mockData.set(configPath(), JSON.stringify({ zenmux_show_paid: true }));
 
 		const { getProviderShowPaid } = await import("../config.ts");
-		expect(getProviderShowPaid("zenmux")).toBe(true);
+		expect(getProviderShowPaid("free-zenmux")).toBe(true);
 		expect(getProviderShowPaid("unknown-provider")).toBe(false);
 	});
 
@@ -285,7 +285,7 @@ describe("show-paid getters", () => {
 		const { getProviderShowPaid, getRoutewayShowPaid } =
 			await import("../config.ts");
 		expect(getRoutewayShowPaid()).toBe(true);
-		expect(getProviderShowPaid("routeway")).toBe(true);
+		expect(getProviderShowPaid("free-routeway")).toBe(true);
 	});
 
 	it("getOpengatewayShowPaid reads from file", async () => {
@@ -300,7 +300,7 @@ describe("show-paid getters", () => {
 		const { getOpengatewayShowPaid, getProviderShowPaid } =
 			await import("../config.ts");
 		expect(getOpengatewayShowPaid()).toBe(true);
-		expect(getProviderShowPaid("opengateway")).toBe(true);
+		expect(getProviderShowPaid("free-opengateway")).toBe(true);
 	});
 });
 
@@ -493,8 +493,8 @@ describe("updateConfig", () => {
 describe("config re-exports", () => {
 	it("exports PROVIDER constants", async () => {
 		const cfg = await import("../config.ts");
-		expect(cfg.PROVIDER_KILO).toBe("kilo");
-		expect(cfg.PROVIDER_CLINE).toBe("cline");
+		expect(cfg.PROVIDER_KILO).toBe("free-kilo");
+		expect(cfg.PROVIDER_CLINE).toBe("free-cline");
 	});
 
 	it("exports all getter functions", async () => {
@@ -535,7 +535,7 @@ describe("model view overrides", () => {
 		__mockData.set(configPath(), JSON.stringify({ free_only: true }));
 
 		const { getModelViewOverride } = await import("../config.ts");
-		expect(getModelViewOverride("kilo")).toBeUndefined();
+		expect(getModelViewOverride("free-kilo")).toBeUndefined();
 		expect(getModelViewOverride("no-such-provider")).toBeUndefined();
 	});
 
@@ -549,8 +549,8 @@ describe("model view overrides", () => {
 		);
 
 		const { getModelViewOverride } = await import("../config.ts");
-		expect(getModelViewOverride("kilo")).toBe("all");
-		expect(getModelViewOverride("cline")).toBeUndefined();
+		expect(getModelViewOverride("free-kilo")).toBe("all");
+		expect(getModelViewOverride("free-cline")).toBeUndefined();
 	});
 
 	it("getModelViewOverride honors a legacy explicit true", async () => {
@@ -565,8 +565,8 @@ describe("model view overrides", () => {
 		);
 
 		const { getModelViewOverride } = await import("../config.ts");
-		expect(getModelViewOverride("kilo")).toBe("all");
-		expect(getModelViewOverride("cline")).toBeUndefined();
+		expect(getModelViewOverride("free-kilo")).toBe("all");
+		expect(getModelViewOverride("free-cline")).toBeUndefined();
 	});
 
 	it("getModelViewOverride counts a set env var as explicit", async () => {
@@ -577,7 +577,7 @@ describe("model view overrides", () => {
 		__mockData.set(configPath(), JSON.stringify({ free_only: true }));
 
 		const { getModelViewOverride } = await import("../config.ts");
-		expect(getModelViewOverride("kilo")).toBe("free");
+		expect(getModelViewOverride("free-kilo")).toBe("free");
 	});
 
 	it("setModelViewOverride merges the map and drops the legacy key", async () => {
@@ -594,7 +594,7 @@ describe("model view overrides", () => {
 		);
 
 		const { setModelViewOverride } = await import("../config.ts");
-		await setModelViewOverride("kilo", "all");
+		await setModelViewOverride("free-kilo", "all");
 
 		const lastCall =
 			writeFileSync.mock.calls[writeFileSync.mock.calls.length - 1];
@@ -602,7 +602,7 @@ describe("model view overrides", () => {
 		expect(written.free_only).toBe(true);
 		expect(written.model_view_overrides).toEqual({
 			cline: "free",
-			kilo: "all",
+			"free-kilo": "all",
 		});
 		expect("kilo_show_paid" in written).toBe(false);
 	});
@@ -619,15 +619,15 @@ describe("model view overrides", () => {
 
 			const { toggleModelViewOverride } = await import("../config.ts");
 			const applied = await Promise.all([
-				toggleModelViewOverride("kilo"),
-				toggleModelViewOverride("kilo"),
+				toggleModelViewOverride("free-kilo"),
+				toggleModelViewOverride("free-kilo"),
 			]);
 			// Two toggles must produce two DIFFERENT flips: all then free.
 			expect([...applied].sort()).toEqual(["all", "free"]);
 			const lastCall =
 				writeFileSync.mock.calls[writeFileSync.mock.calls.length - 1];
 			const written = parseMockJson(lastCall[1]);
-			expect(written.model_view_overrides).toEqual({ kilo: "free" });
+			expect(written.model_view_overrides).toEqual({ "free-kilo": "free" });
 		});
 
 		it("pins the pre-fix collapse shape (read-then-write)", async () => {
@@ -642,22 +642,22 @@ describe("model view overrides", () => {
 			const { getModelViewOverride, getFreeOnly, setModelViewOverride } =
 				await import("../config.ts");
 			const readFlip = () =>
-				(getModelViewOverride("kilo") ?? (getFreeOnly() ? "free" : "all")) ===
+				(getModelViewOverride("free-kilo") ?? (getFreeOnly() ? "free" : "all")) ===
 				"free"
 					? "all"
 					: "free";
 			const first = readFlip();
 			const second = readFlip();
 			await Promise.all([
-				setModelViewOverride("kilo", first),
-				setModelViewOverride("kilo", second),
+				setModelViewOverride("free-kilo", first),
+				setModelViewOverride("free-kilo", second),
 			]);
 			// Both read the same stale state: one net flip for two toggles.
 			expect(first).toBe(second);
 			const lastCall =
 				writeFileSync.mock.calls[writeFileSync.mock.calls.length - 1];
 			const written = parseMockJson(lastCall[1]);
-			expect(written.model_view_overrides).toEqual({ kilo: "all" });
+			expect(written.model_view_overrides).toEqual({ "free-kilo": "all" });
 		});
 	});
 
@@ -687,5 +687,27 @@ describe("model view overrides", () => {
 		expect("model_view_overrides" in written).toBe(false);
 		expect("kilo_show_paid" in written).toBe(false);
 		expect("opencode_free_show_paid" in written).toBe(false);
+	});
+});
+
+describe("legacy provider ID migration", () => {
+	it("migrates legacy provider IDs in free.json maps on read", async () => {
+		vi.stubEnv("HOME", "/tmp");
+		const fs = await import("node:fs");
+		const { __mockData } = fs as any;
+		__mockData.set(
+			configPath(),
+			JSON.stringify({
+				model_view_overrides: { kilo: "all" },
+				hidden_models: ["kilo/some-model"],
+				auto_fallback_providers: ["cline"],
+			}),
+		);
+		const { loadConfigFile } = await import("../config.ts");
+		const cfg = loadConfigFile();
+		expect(cfg.model_view_overrides?.["free-kilo"]).toBe("all");
+		expect(cfg.model_view_overrides?.["kilo"]).toBeUndefined();
+		expect(cfg.hidden_models).toContain("free-kilo/some-model");
+		expect(cfg.auto_fallback_providers).toContain("free-cline");
 	});
 });

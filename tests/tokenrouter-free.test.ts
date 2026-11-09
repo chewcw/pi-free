@@ -44,7 +44,7 @@ describe("TokenRouter free model detection", () => {
 			tags: "text",
 		});
 		expect(mapped._isFree).toBe(true);
-		expect(isFreeModel({ ...mapped, provider: "tokenrouter" }, allModels)).toBe(
+		expect(isFreeModel({ ...mapped, provider: "free-tokenrouter" }, allModels)).toBe(
 			true,
 		);
 	});
@@ -59,14 +59,14 @@ describe("TokenRouter free model detection", () => {
 			tags: "text",
 		});
 		expect(mapped._isFree).toBe(false);
-		expect(isFreeModel({ ...mapped, provider: "tokenrouter" }, allModels)).toBe(
+		expect(isFreeModel({ ...mapped, provider: "free-tokenrouter" }, allModels)).toBe(
 			false,
 		);
 	});
 
 	it("detects regular models as not free", () => {
 		expect(
-			isFreeModel({ ...paidModel, provider: "tokenrouter" }, allModels),
+			isFreeModel({ ...paidModel, provider: "free-tokenrouter" }, allModels),
 		).toBe(false);
 	});
 });

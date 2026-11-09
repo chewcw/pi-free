@@ -67,7 +67,7 @@ describe("FastRouter native provider", () => {
 		expect(mocks.registerNativeOpenAIProvider).toHaveBeenCalledWith(
 			pi,
 			expect.objectContaining({
-				providerId: "fastrouter",
+				providerId: "free-fastrouter",
 				baseUrl: "https://api.fastrouter.ai/api/v1",
 				allowUnauthenticated: true,
 			}),
@@ -79,7 +79,7 @@ describe("FastRouter native provider", () => {
 		await fetchFastrouterModels("", signal);
 		expect(mocks.fetchModels).toHaveBeenCalledWith(
 			expect.objectContaining({
-				providerId: "fastrouter",
+				providerId: "free-fastrouter",
 				baseUrl: "https://api.fastrouter.ai/api/v1",
 				apiKey: undefined,
 				signal,

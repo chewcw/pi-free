@@ -21,7 +21,7 @@ describe("wire-signature logging (M3, #437)", () => {
 	it("logs the request contract with header NAMES only — never values (redaction)", () => {
 		logWireSignature({
 			id: "nvidia/nemotron-3.5-lightning:free",
-			provider: "cline",
+			provider: "free-cline",
 			api: "openai-completions",
 			baseUrl: "https://api.cline.bot/api/v1",
 			headers: {
@@ -33,7 +33,7 @@ describe("wire-signature logging (M3, #437)", () => {
 		expect(mockDebug).toHaveBeenCalledTimes(1);
 		const [message, data] = mockDebug.mock.calls[0]!;
 		expect(message).toContain("agent request contract");
-		expect(data.provider).toBe("cline");
+		expect(data.provider).toBe("free-cline");
 		expect(data.model).toBe("nvidia/nemotron-3.5-lightning:free");
 		expect(data.api).toBe("openai-completions");
 		expect(data.baseUrl).toBe("https://api.cline.bot/api/v1");
@@ -53,7 +53,7 @@ describe("wire-signature logging (M3, #437)", () => {
 		logWireSignature(
 			{
 				id: "m-1",
-				provider: "kilo",
+				provider: "free-kilo",
 				api: "openai-completions",
 				baseUrl: "https://gateway.kilo.chat/v1",
 				headers: { "X-Task-ID": "rotating" },

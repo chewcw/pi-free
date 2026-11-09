@@ -142,7 +142,7 @@ function model(id: string, paid = false) {
 		contextWindow: 128_000,
 		maxTokens: 16_384,
 		api: "openai-completions",
-		provider: "tokenrouter",
+		provider: "free-tokenrouter",
 		baseUrl: "https://api.tokenrouter.com/v1",
 	};
 }
@@ -158,7 +158,7 @@ beforeEach(() => {
 describe("createTokenRouterProvider", () => {
 	it("builds a keyed native provider and hides it without credentials", async () => {
 		const { provider } = createTokenRouterProvider();
-		expect(provider.id).toBe("tokenrouter");
+		expect(provider.id).toBe("free-tokenrouter");
 		expect(provider.baseUrl).toBe("https://api.tokenrouter.com/v1");
 		expect(provider.getModels()).toEqual([]);
 		expect(
@@ -291,9 +291,9 @@ describe("TokenRouter native factory", () => {
 		await tokenRouterEntry(pi);
 
 		expect(registerProvider).toHaveBeenCalledTimes(1);
-		expect(registerProvider.mock.calls[0]![0].id).toBe("tokenrouter");
+		expect(registerProvider.mock.calls[0]![0].id).toBe("free-tokenrouter");
 		expect(registerCommand).toHaveBeenCalledWith(
-			"toggle-tokenrouter",
+			"toggle-free-tokenrouter",
 			expect.any(Object),
 		);
 		expect(mockFetchWithRetry).not.toHaveBeenCalled();
@@ -322,7 +322,7 @@ describe("TokenRouter native factory", () => {
 
 		const patched = await handler(
 			{ payload: { model: "MiniMax-M3", thinking: { type: "enabled" } } },
-			{ model: { provider: "tokenrouter", id: "MiniMax-M3" } },
+			{ model: { provider: "free-tokenrouter", id: "MiniMax-M3" } },
 		);
 		expect(patched).toEqual({
 			model: "MiniMax-M3",
@@ -384,7 +384,7 @@ describe("TokenRouter request normalization and streaming", () => {
 			const testModel = {
 				id: "deepseek-r1",
 				api: "openai-completions",
-				provider: "tokenrouter",
+				provider: "free-tokenrouter",
 				baseUrl: "https://api.tokenrouter.com/v1",
 			} as never;
 

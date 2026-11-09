@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Hide a whole provider from the model picker** — `/hide-provider <id>` and `/show-provider <id>` add and remove a `${id}/*` wildcard in `hidden_models`, so a provider's entire catalog disappears from the picker without enumerating per-model entries (the clutter case from #572). The wildcard is honored by the same central `applyHidden` filter every native and fetcher provider already uses, composes with per-model hiding (revealing a provider keeps individually hidden models hidden), shares the cross-process config lock, and re-applies the current free/all view so the change is live. Guards: `tests/provider-hide.test.ts` (all four fail pre-fix) ([#572](https://github.com/apmantza/pi-free/issues/572)).
+- **Provider IDs carry the `free-` prefix** — every provider pi-free registers now uses `free-<id>` (`free-kilo`, `free-cline`, `free-commandcode`, …) so it can never collide with a Pi built-in or upstream provider of the same name; derived commands follow the ID (`/toggle-free-kilo`, `/probe-free-kilo`, `/login free-kilo`). `~/.pi/free.json` maps (`model_view_overrides`, `hidden_models`, `auto_fallback_providers`) migrate from legacy bare IDs on read. Pi owns `auth.json` and the model store, so stored credentials and catalog snapshots do not migrate — after upgrading, run `/login <provider>` once per provider to re-authenticate.
 
 ## [2.8.5] - 2026-10-15
 

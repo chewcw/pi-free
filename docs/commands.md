@@ -23,34 +23,34 @@ To remove a provider from the model picker entirely, run `/hide-provider <provid
 
 | Command | Provider | Surface |
 | --- | --- | --- |
-| `/toggle-kilo` | Kilo | Native |
-| `/toggle-cline` | Cline | Native |
-| `/toggle-ollama-cloud` | Ollama Cloud | Native |
-| `/toggle-llm7` | LLM7 | Native |
-| `/toggle-zenmux` | ZenMux | Native |
-| `/toggle-deepinfra` | DeepInfra | Native |
-| `/toggle-sambanova` | SambaNova | Native |
-| `/toggle-novita` | Novita AI | Native |
-| `/toggle-routeway` | Routeway AI | Native |
+| `/toggle-free-kilo` | Kilo | Native |
+| `/toggle-free-cline` | Cline | Native |
+| `/toggle-free-ollama-cloud` | Ollama Cloud | Native |
+| `/toggle-free-llm7` | LLM7 | Native |
+| `/toggle-free-zenmux` | ZenMux | Native |
+| `/toggle-free-deepinfra` | DeepInfra | Native |
+| `/toggle-free-sambanova` | SambaNova | Native |
+| `/toggle-free-novita` | Novita AI | Native |
+| `/toggle-free-routeway` | Routeway AI | Native |
 | `/toggle-opengateway` | OpenGateway | Native |
-| `/toggle-tokenrouter` | TokenRouter | Native |
+| `/toggle-free-tokenrouter` | TokenRouter | Native |
 | `/toggle-anyapi` | AnyAPI | Native |
 | `/toggle-bai` | B.AI | Native |
 | `/toggle-orcarouter` | OrcaRouter | Native |
 | `/toggle-xkiro` | Xkiro | Native |
-| `/toggle-stepfun` | StepFun | Native |
-| `/toggle-qoder` | Qoder | Legacy |
+| `/toggle-free-stepfun` | StepFun | Native |
+| `/toggle-free-qoder` | Qoder | Legacy |
 | `/toggle-openrouter` | OpenRouter | Pi built-in |
 | `/toggle-opencode-free` | OpenCode Zen free wrapper | Pi built-in catalog + detached Zen refresh |
 | `/toggle-opencode-go` | OpenCode Go | Pi built-in catalog + detached Go refresh |
-| `/toggle-fastrouter` | FastRouter | Native |
+| `/toggle-free-fastrouter` | FastRouter | Native |
 | `/toggle-gmi` | GMI Cloud | Native |
 | `/toggle-agnes` | Agnes AI | Native |
 | `/toggle-requesty` | Requesty | Native |
-| `/toggle-venice` | Venice AI | Native |
+| `/toggle-free-venice` | Venice AI | Native |
 | `/toggle-infron` | Infron AI | Native |
 | `/toggle-merge` | Merge Gateway | Native |
-| `/toggle-commandcode` | CommandCode | Native |
+| `/toggle-free-commandcode` | CommandCode | Native |
 
 Native providers retain their complete catalog and let Pi apply the current filter. All pi-free providers now use the native provider lifecycle; Pi built-in providers retain Pi-owned catalogs.
 
@@ -58,11 +58,11 @@ Native providers retain their complete catalog and let Pi apply the current filt
 
 | Command | Description |
 | --- | --- |
-| `/login kilo` | Start Kilo OAuth. Kilo also accepts `KILO_API_KEY`. |
-| `/login cline` | Start Cline OAuth. Cline's public catalog does not require login; chat does. |
-| `/login qoder` | Authenticate Qoder with a PAT or browser OAuth. |
-| `/logout kilo` | Clear Kilo credentials managed by Pi. |
-| `/logout cline` | Clear Cline credentials managed by Pi. |
+| `/login free-kilo` | Start Kilo OAuth. Kilo also accepts `KILO_API_KEY`. |
+| `/login free-cline` | Start Cline OAuth. Cline's public catalog does not require login; chat does. |
+| `/login free-qoder` | Authenticate Qoder with a PAT or browser OAuth. |
+| `/logout free-kilo` | Clear Kilo credentials managed by Pi. |
+| `/logout free-cline` | Clear Cline credentials managed by Pi. |
 
 Qoder PAT authentication can also use `QODER_PERSONAL_ACCESS_TOKEN` or its `QODER_PAT` alias. See [providers.md](providers.md) for all API-key names.
 
@@ -81,9 +81,9 @@ Probes test model availability. Automatic checks use a 24-hour probe cache; runn
 | Command | Provider | What it does |
 | --- | --- | --- |
 | `/probe-ollama` | Ollama Cloud | Test for 403 access-denied models and auto-hide them. |
-| `/probe-routeway` | Routeway | Test for 5xx/404 errors and auto-hide broken models. |
-| `/probe-deepinfra` | DeepInfra | Test for 404/5xx errors and auto-hide broken models. |
-| `/probe-sambanova` | SambaNova | Test for 404/5xx errors and auto-hide broken models. |
-| `/probe-novita` | Novita AI | Test for 404/5xx errors and auto-hide broken models. |
+| `/probe-free-routeway` | Routeway | Test for 5xx/404 errors and auto-hide broken models. |
+| `/probe-free-deepinfra` | DeepInfra | Test for 404/5xx errors and auto-hide broken models. |
+| `/probe-free-sambanova` | SambaNova | Test for 404/5xx errors and auto-hide broken models. |
+| `/probe-free-novita` | Novita AI | Test for 404/5xx errors and auto-hide broken models. |
 
 Probes never treat a transient network failure as proof that a model is broken.

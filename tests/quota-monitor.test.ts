@@ -41,11 +41,11 @@ describe("quota-monitor response outcome counters (M2 + Mn3, #437)", () => {
 		const { processQuotaResponse, getResponseCounters } =
 			await import("../lib/quota-monitor.ts");
 
-		processQuotaResponse("cline", 401, {});
-		processQuotaResponse("cline", 403, {});
-		processQuotaResponse("cline", 401, {});
+		processQuotaResponse("free-cline", 401, {});
+		processQuotaResponse("free-cline", 403, {});
+		processQuotaResponse("free-cline", 401, {});
 
-		expect(getResponseCounters("cline")).toMatchObject({
+		expect(getResponseCounters("free-cline")).toMatchObject({
 			authFailures: 3,
 			rateLimited: 0,
 			serverErrors: 0,

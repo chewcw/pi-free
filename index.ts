@@ -24,6 +24,11 @@ import {
 } from "./lib/startup-timing.ts";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import {
+	PROVIDER_DEEPINFRA,
+	PROVIDER_OLLAMA,
+	PROVIDER_SAMBANOVA,
+} from "./constants.ts";
+import {
 	clearModelViewOverrides,
 	isProviderHidden,
 	setProviderHidden,
@@ -268,9 +273,9 @@ function setupGlobalCommands(pi: ExtensionAPI) {
 			const registry = getProviderRegistry();
 
 			// Freemium providers - all models share a free tier quota
-			const freemiumProviders = new Set(["sambanova", "ollama-cloud"]);
+			const freemiumProviders = new Set([PROVIDER_SAMBANOVA, PROVIDER_OLLAMA]);
 			// Trial credit providers - one-time credits, otherwise paid
-			const trialCreditProviders = new Set(["deepinfra"]);
+			const trialCreditProviders = new Set([PROVIDER_DEEPINFRA]);
 
 			for (const [id, entry] of registry) {
 				const free = entry.stored.free.length;

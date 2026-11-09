@@ -11,13 +11,13 @@
  *     object and registers it. Models load via `refreshModels` (offline init
  *     from the native models store, then a background fetch of Cline's PUBLIC
  *     catalog), so Cline no longer owns any of Pi's startup critical path and
- *     models still appear before `/login cline` (browsing needs no account).
+ *     models still appear before `/login free-cline` (browsing needs no account).
  *   - Native `auth` (API key + OAuth callback-server flow) persisted to
- *     ~/.pi/agent/auth.json — the same store the legacy `/login cline` used.
+ *     ~/.pi/agent/auth.json — the same store the legacy `/login free-cline` used.
  *   - Free/paid filtering stays on pi-free's re-registration toggle so it keeps
  *     composing with the global /toggle-free system.
  *
- * Run /login cline to authenticate and make API calls; /toggle-cline shows the
+ * Run /login free-cline to authenticate and make API calls; /toggle-cline shows the
  * paid catalog.
  */
 

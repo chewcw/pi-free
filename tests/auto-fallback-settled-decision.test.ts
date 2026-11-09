@@ -13,17 +13,17 @@ import {
 
 describe("matchesScope", () => {
 	it("restricts provider scope to the failing provider", () => {
-		expect(matchesScope("kilo", "provider", "kilo", [])).toBe(true);
-		expect(matchesScope("cline", "provider", "kilo", [])).toBe(false);
+		expect(matchesScope("free-kilo", "provider", "free-kilo", [])).toBe(true);
+		expect(matchesScope("free-cline", "provider", "free-kilo", [])).toBe(false);
 	});
 
 	it("restricts whitelist scope to listed providers", () => {
-		expect(matchesScope("kilo", "whitelist", "cline", ["kilo"])).toBe(true);
-		expect(matchesScope("cline", "whitelist", "cline", ["kilo"])).toBe(false);
+		expect(matchesScope("free-kilo", "whitelist", "free-cline", ["free-kilo"])).toBe(true);
+		expect(matchesScope("free-cline", "whitelist", "free-cline", ["free-kilo"])).toBe(false);
 	});
 
 	it("admits every provider in global scope", () => {
-		expect(matchesScope("anything", "global", "kilo", [])).toBe(true);
+		expect(matchesScope("anything", "global", "free-kilo", [])).toBe(true);
 	});
 });
 
@@ -34,31 +34,31 @@ describe("classifySettledFailure", () => {
 		expect(
 			classifySettledFailure(
 				{ role: "assistant", stopReason: "stop" },
-				"kilo",
+				"free-kilo",
 				"m",
 				noStatus,
 			),
 		).toBeNull();
-		expect(classifySettledFailure(null, "kilo", "m", noStatus)).toBeNull();
+		expect(classifySettledFailure(null, "free-kilo", "m", noStatus)).toBeNull();
 	});
 
 	it("classifies a recoverable error with message identity", () => {
 		const failure = classifySettledFailure(
 			{
 				role: "assistant",
-				provider: "kilo",
+				provider: "free-kilo",
 				model: "broken-model",
 				stopReason: "error",
 				errorMessage: "429 rate limited",
 			},
-			"kilo",
+			"free-kilo",
 			"other-model",
 			noStatus,
 		);
 		expect(failure).toMatchObject({
-			provider: "kilo",
+			provider: "free-kilo",
 			modelId: "broken-model",
-			key: "kilo/broken-model",
+			key: "free-kilo/broken-model",
 		});
 		expect(failure?.reason).toBe("error");
 	});
@@ -66,12 +66,12 @@ describe("classifySettledFailure", () => {
 	it("falls back to the current model when the message lacks identity", () => {
 		const failure = classifySettledFailure(
 			{ role: "assistant", stopReason: "error", errorMessage: "500 boom" },
-			"cline",
+			"free-cline",
 			"current-model",
 			noStatus,
 		);
 		expect(failure).toMatchObject({
-			provider: "cline",
+			provider: "free-cline",
 			modelId: "current-model",
 		});
 	});
@@ -91,7 +91,7 @@ describe("classifySettledFailure", () => {
 		expect(
 			classifySettledFailure(
 				{ role: "assistant", stopReason: "aborted" },
-				"kilo",
+				"free-kilo",
 				"m",
 				noStatus,
 			),
@@ -102,14 +102,14 @@ describe("classifySettledFailure", () => {
 		const failure = classifySettledFailure(
 			{
 				role: "assistant",
-				provider: "kilo",
+				provider: "free-kilo",
 				model: "m",
 				stopReason: "aborted",
 				// Must carry a classifiable error: a bare "aborted" with no
 				// known class is user-initiated and returns null earlier.
 				errorMessage: "429 rate limited",
 			},
-			"kilo",
+			"free-kilo",
 			"m",
 			() => 503,
 		);
@@ -121,12 +121,12 @@ describe("classifySettledFailure", () => {
 			classifySettledFailure(
 				{
 					role: "assistant",
-					provider: "kilo",
+					provider: "free-kilo",
 					model: "m",
 					stopReason: "aborted",
 					errorMessage: "aborted",
 				},
-				"kilo",
+				"free-kilo",
 				"m",
 				() => 400,
 			),

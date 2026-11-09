@@ -219,7 +219,7 @@ describe("detectModelFamily", () => {
 			{
 				id: "kilo-auto/free",
 				name: "Auto",
-				provider: "kilo",
+				provider: "free-kilo",
 				isFree: true,
 				inputCost: 0,
 				outputCost: 0,

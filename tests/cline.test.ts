@@ -1,7 +1,7 @@
 /**
  * Cline factory wiring tests (end-to-end: extension wiring + real native
  * provider, network mocked). Mirrors tests/kilo-toggle.test.ts: verifies the
- * network-free factory, native registration, /toggle-cline, the global
+ * network-free factory, native registration, /toggle-free-cline, the global
  * /toggle-free re-register hook, task-id rotation, and the session_start
  * refresh nudge.
  */
@@ -39,7 +39,7 @@ vi.mock("../config.ts", () => ({
 	setModelViewOverride: (...args: unknown[]) =>
 		mockSetModelViewOverride(...args),
 	saveConfig: (...args: unknown[]) => mockSaveConfig(...args),
-	PROVIDER_CLINE: "cline",
+	PROVIDER_CLINE: "free-cline",
 }));
 
 vi.mock("../lib/registry.ts", () => ({
@@ -141,7 +141,7 @@ describe("Cline factory wiring", () => {
 		// Native provider object registered (single arg).
 		expect(mockRegisterProvider).toHaveBeenCalledTimes(1);
 		const provider = mockRegisterProvider.mock.calls[0]![0];
-		expect(provider.id).toBe("cline");
+		expect(provider.id).toBe("free-cline");
 		expect(provider.getModels()).toEqual([]);
 		expect(provider.auth.apiKey).toBeDefined();
 		expect(provider.auth.oauth).toBeDefined();
@@ -155,7 +155,7 @@ describe("Cline factory wiring", () => {
 		)?.[1];
 		expect(beforeAgent).toBeDefined();
 		const taskIdBefore = provider.headers["X-Task-ID"];
-		await beforeAgent({}, { model: { provider: "cline" } });
+		await beforeAgent({}, { model: { provider: "free-cline" } });
 		expect(provider.headers["X-Task-ID"]).not.toBe(taskIdBefore);
 
 		// Lifecycle handlers + toggle command registered.
@@ -165,7 +165,7 @@ describe("Cline factory wiring", () => {
 		);
 		expect(mockOn).toHaveBeenCalledWith("session_start", expect.any(Function));
 		expect(
-			mockRegisterCommand.mock.calls.some((c) => c[0] === "toggle-cline"),
+			mockRegisterCommand.mock.calls.some((c) => c[0] === "toggle-free-cline"),
 		).toBe(true);
 	});
 
@@ -178,7 +178,7 @@ describe("Cline factory wiring", () => {
 			unknown,
 			boolean,
 		];
-		expect(providerId).toBe("cline");
+		expect(providerId).toBe("free-cline");
 		expect(hasKey).toBe(false);
 
 		mockGetClineApiKey.mockReturnValue("sk-cline");
@@ -209,10 +209,10 @@ describe("Cline factory wiring", () => {
 	// (opencode-free through prompt dispatch, incl. persistence across
 	// replacement); this pins the per-provider wiring that would
 	// otherwise go unverified.
-	it("registers the toggle-cline command", async () => {
+	it("registers the toggle-free-cline command", async () => {
 		await clineProvider(mockPi);
 		const call = mockRegisterCommand.mock.calls.find(
-			(c) => c[0] === "toggle-cline",
+			(c) => c[0] === "toggle-free-cline",
 		);
 		expect(call).toBeDefined();
 	});
@@ -225,7 +225,7 @@ describe("Cline factory wiring", () => {
 		expect(handler).toBeDefined();
 
 		const before = buildClineHeaders()["X-Task-ID"];
-		await handler({}, { model: { provider: "cline" } });
+		await handler({}, { model: { provider: "free-cline" } });
 		const after = buildClineHeaders()["X-Task-ID"];
 		expect(after).not.toBe(before);
 		// The rest of the VS Code-spoofing headers are unchanged.
@@ -236,7 +236,7 @@ describe("Cline factory wiring", () => {
 		});
 
 		// A different provider does not rotate the task id.
-		await handler({}, { model: { provider: "kilo" } });
+		await handler({}, { model: { provider: "free-kilo" } });
 		expect(buildClineHeaders()["X-Task-ID"]).toBe(after);
 	});
 
@@ -250,7 +250,7 @@ describe("Cline factory wiring", () => {
 			const selectedTools: string[] = ["read", "bash"];
 			await handler(
 				{ systemPromptOptions: { selectedTools } },
-				{ model: { provider: "cline" } },
+				{ model: { provider: "free-cline" } },
 			);
 			expect(selectedTools).toContain(GLOB_TOOL_NAME);
 			expect(selectedTools).toEqual(["read", "bash", "glob"]);
@@ -265,11 +265,11 @@ describe("Cline factory wiring", () => {
 			const selectedTools: string[] = ["read", "glob"];
 			await handler(
 				{ systemPromptOptions: { selectedTools } },
-				{ model: { provider: "cline" } },
+				{ model: { provider: "free-cline" } },
 			);
 			await handler(
 				{ systemPromptOptions: { selectedTools } },
-				{ model: { provider: "cline" } },
+				{ model: { provider: "free-cline" } },
 			);
 			expect(selectedTools).toEqual(["read", "glob"]);
 		});
@@ -283,7 +283,7 @@ describe("Cline factory wiring", () => {
 			const selectedTools: string[] = ["read", "bash"];
 			await handler(
 				{ systemPromptOptions: { selectedTools } },
-				{ model: { provider: "kilo" } },
+				{ model: { provider: "free-kilo" } },
 			);
 			expect(selectedTools).not.toContain(GLOB_TOOL_NAME);
 			expect(selectedTools).toEqual(["read", "bash"]);
@@ -311,7 +311,7 @@ describe("Cline factory wiring", () => {
 			)?.[1];
 			expect(handler).toBeDefined();
 			expect(() =>
-				handler({}, { model: { provider: "cline" } }),
+				handler({}, { model: { provider: "free-cline" } }),
 			).not.toThrow();
 		});
 	});

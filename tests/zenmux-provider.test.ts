@@ -102,7 +102,7 @@ function nativeModel(id: string, paid = false) {
 		contextWindow: 32_000,
 		maxTokens: 16_000,
 		api: "openai-completions",
-		provider: "zenmux",
+		provider: "free-zenmux",
 		baseUrl: "https://zenmux.ai/api/v1",
 	};
 }
@@ -155,7 +155,7 @@ beforeEach(() => {
 describe("createZenmuxProvider", () => {
 	it("builds a keyed native provider", async () => {
 		const { provider } = createZenmuxProvider();
-		expect(provider.id).toBe("zenmux");
+		expect(provider.id).toBe("free-zenmux");
 		expect(provider.name).toBe("ZenMux");
 		expect(provider.baseUrl).toBe("https://zenmux.ai/api/v1");
 		expect(provider.auth.apiKey).toBeDefined();
@@ -282,7 +282,7 @@ describe("createZenmuxProvider", () => {
 		await handle.provider.refreshModels?.(
 			context(store, { allowNetwork: true }),
 		);
-		expect(mockApplyHidden).toHaveBeenCalledWith(expect.any(Array), "zenmux");
+		expect(mockApplyHidden).toHaveBeenCalledWith(expect.any(Array), "free-zenmux");
 		expect(handle.stored.all.map((model) => model.id)).toEqual(["visible"]);
 	});
 

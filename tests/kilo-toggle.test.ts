@@ -1,6 +1,6 @@
 /**
  * Kilo toggle interop tests (end-to-end: extension wiring + real native provider,
- * network mocked). Verifies /toggle-kilo and the global /toggle-free re-register
+ * network mocked). Verifies /toggle-free-kilo and the global /toggle-free re-register
  * hook both drive the native provider's visible catalog without dropping auth.
  */
 
@@ -39,7 +39,7 @@ vi.mock("../config.ts", () => ({
 		mockSetModelViewOverride(...args),
 	getKiloFreeOnly: () => mockGetKiloFreeOnly(),
 	saveConfig: (...args: unknown[]) => mockSaveConfig(...args),
-	PROVIDER_KILO: "kilo",
+	PROVIDER_KILO: "free-kilo",
 }));
 
 vi.mock("../lib/registry.ts", () => ({
@@ -150,10 +150,10 @@ describe("Kilo toggle interop", () => {
 	// Flip/persist/view behavior is proven live by rpc-toggle-check
 	// (opencode-free) + rpc-session-check (/toggle-llm7); this pins the
 	// per-provider wiring that would otherwise go unverified.
-	it("registers the toggle-kilo command", async () => {
+	it("registers the toggle-free-kilo command", async () => {
 		await kiloProvider(mockPi);
 		const call = mockRegisterCommand.mock.calls.find(
-			(c) => c[0] === "toggle-kilo",
+			(c) => c[0] === "toggle-free-kilo",
 		);
 		expect(call).toBeDefined();
 	});

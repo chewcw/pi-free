@@ -524,7 +524,7 @@ export async function refreshClineToken(
 					secondErr instanceof Error ? secondErr.message : String(secondErr),
 			});
 			throw new Error(
-				"Cline token refresh failed. Run /login cline to re-authenticate.",
+				"Cline token refresh failed. Run /login free-cline to re-authenticate.",
 				{ cause: secondErr },
 			);
 		}
@@ -598,7 +598,7 @@ export async function loginClineNative(
 /**
  * Native OAuth refresh. Delegates to the proven `refreshClineToken` (still-valid
  * credential returned as-is; expired → one retry, then throw so Pi preserves the
- * stored credential and `/login cline` re-authenticates). Pi runs this under the
+ * stored credential and `/login free-cline` re-authenticates). Pi runs this under the
  * credential-store lock before any network access, replacing the refresh the
  * legacy `oauth.refreshToken` config required Pi's composer to adapt.
  */
@@ -616,7 +616,7 @@ export async function refreshClineCredential(
  * Cline-specific deviation from the Kilo recipe: when NO key is configured this
  * still resolves — with an empty `auth` — instead of returning undefined. Cline's
  * model catalog is public (the legacy factory fetched it with no credential, so
- * models appeared before `/login cline`). Pi's `Models.refresh()` skips providers
+ * models appeared before `/login free-cline`). Pi's `Models.refresh()` skips providers
  * whose auth does not resolve, which would leave logged-out users with no models
  * at all (no offline init, no background refresh). Always resolving keeps the
  * catalog flowing for everyone — this is Pi's sanctioned keyless pattern (the

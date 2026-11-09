@@ -51,7 +51,7 @@ describe("global filter provider overrides", () => {
 
 	it("explicit all-override wins over global free-only", async () => {
 		mocks.getModelViewOverride.mockImplementation((providerId: string) =>
-			providerId === "zenmux" ? "all" : undefined,
+			providerId === "free-zenmux" ? "all" : undefined,
 		);
 		const { applyGlobalFilter, registerWithGlobalToggle } =
 			await loadRegistry();
@@ -59,7 +59,7 @@ describe("global filter provider overrides", () => {
 		const allModels = [freeModel, paidModel];
 
 		registerWithGlobalToggle(
-			"zenmux",
+			"free-zenmux",
 			{ free: [freeModel], all: allModels },
 			reRegister,
 			true,
@@ -75,7 +75,7 @@ describe("global filter provider overrides", () => {
 		const reRegister = vi.fn();
 
 		registerWithGlobalToggle(
-			"zenmux",
+			"free-zenmux",
 			{ free: [freeModel], all: [freeModel, paidModel] },
 			reRegister,
 			true,
@@ -92,7 +92,7 @@ describe("global filter provider overrides", () => {
 		const reRegister = vi.fn();
 
 		registerWithGlobalToggle(
-			"zenmux",
+			"free-zenmux",
 			{ free: [freeModel], all: [freeModel, paidModel] },
 			reRegister,
 			true,
@@ -109,7 +109,7 @@ describe("global filter provider overrides", () => {
 		const allModels = [freeModel, paidModel];
 
 		registerWithGlobalToggle(
-			"zenmux",
+			"free-zenmux",
 			{ free: [freeModel], all: allModels },
 			reRegister,
 			true,
@@ -131,21 +131,21 @@ describe("resolveModelView", () => {
 		mocks.getModelViewOverride.mockReturnValue("all");
 		const { applyGlobalFilter, resolveModelView } = await loadRegistry();
 		applyGlobalFilter(true);
-		expect(resolveModelView("zenmux")).toBe("all");
+		expect(resolveModelView("free-zenmux")).toBe("all");
 	});
 
 	it("returns free for an explicit-free override under global-off", async () => {
 		mocks.getModelViewOverride.mockReturnValue("free");
 		const { applyGlobalFilter, resolveModelView } = await loadRegistry();
 		applyGlobalFilter(false);
-		expect(resolveModelView("zenmux")).toBe("free");
+		expect(resolveModelView("free-zenmux")).toBe("free");
 	});
 
 	it("follows the global default without an override", async () => {
 		const { applyGlobalFilter, resolveModelView } = await loadRegistry();
 		applyGlobalFilter(true);
-		expect(resolveModelView("zenmux")).toBe("free");
+		expect(resolveModelView("free-zenmux")).toBe("free");
 		applyGlobalFilter(false);
-		expect(resolveModelView("zenmux")).toBe("all");
+		expect(resolveModelView("free-zenmux")).toBe("all");
 	});
 });

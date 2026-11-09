@@ -1085,7 +1085,7 @@ describe("built-in provider toggles", () => {
 						model: { provider: "opencode-free", modelId: "free-model" },
 					}),
 				},
-				model: { provider: "kilo", id: "fallback-model" },
+				model: { provider: "free-kilo", id: "fallback-model" },
 			},
 		);
 		await settleDetachedCapture();
@@ -1117,10 +1117,10 @@ describe("built-in provider toggles", () => {
 				modelRegistry: { getAvailable: () => [capturedModel] },
 				sessionManager: {
 					buildSessionContext: () => ({
-						model: { provider: "kilo", modelId: "other-model" },
+						model: { provider: "free-kilo", modelId: "other-model" },
 					}),
 				},
-				model: { provider: "kilo", id: "other-model" },
+				model: { provider: "free-kilo", id: "other-model" },
 			},
 		);
 		await settleDetachedCapture();
@@ -1175,7 +1175,7 @@ describe("built-in provider toggles", () => {
 				contextReads += 1;
 				return contextReads === 1
 					? { model: { provider: "opencode-free", modelId: "free-model" } }
-					: { model: { provider: "kilo", modelId: "user-pick" } };
+					: { model: { provider: "free-kilo", modelId: "user-pick" } };
 			},
 		};
 
@@ -1187,7 +1187,7 @@ describe("built-in provider toggles", () => {
 					getAvailable: () => [capturedModel],
 				},
 				sessionManager,
-				model: { provider: "kilo", id: "fallback-model" },
+				model: { provider: "free-kilo", id: "fallback-model" },
 			},
 		);
 		await settleDetachedCapture();

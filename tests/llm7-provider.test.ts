@@ -106,7 +106,7 @@ function nativeCfg(id: string, paid = false) {
 	return {
 		...(paid ? paidCfg(id) : freeCfg(id)),
 		api: "openai-completions",
-		provider: "llm7",
+		provider: "free-llm7",
 		baseUrl: "https://api.llm7.io/v1",
 	};
 }
@@ -159,7 +159,7 @@ beforeEach(() => {
 describe("createLlm7Provider shape", () => {
 	it("builds a native provider with auth, getModels, refreshModels, streams", () => {
 		const { provider } = createLlm7Provider();
-		expect(provider.id).toBe("llm7");
+		expect(provider.id).toBe("free-llm7");
 		expect(provider.name).toBe("LLM7");
 		expect(provider.baseUrl).toBe("https://api.llm7.io/v1");
 		expect(provider.headers).toMatchObject({
@@ -369,7 +369,7 @@ describe("refreshModels online", () => {
 		expect(
 			written[0]!.models.every((m) => m.api === "openai-completions"),
 		).toBe(true);
-		expect(written[0]!.models.every((m) => m.provider === "llm7")).toBe(true);
+		expect(written[0]!.models.every((m) => m.provider === "free-llm7")).toBe(true);
 		expect(
 			written[0]!.models.every((m) => m.baseUrl === "https://api.llm7.io/v1"),
 		).toBe(true);
@@ -445,6 +445,6 @@ describe("refreshModels online", () => {
 	});
 });
 // NOTE (RPC migration): filter-view behavior is proven live by
-// rpc-session-check (/toggle-llm7 phases incl. persistence across
+// rpc-session-check (/toggle-free-llm7 phases incl. persistence across
 // replacement). View resolution itself is pinned in
 // registry-provider-overrides.test.ts against the real resolver.

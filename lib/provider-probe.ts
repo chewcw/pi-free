@@ -7,7 +7,7 @@
  *
  * Usage:
  *   const probe = createProviderProbe({
- *     providerId: "deepinfra",
+ *     providerId: "free-deepinfra",
  *     probeModel: async (apiKey, modelId) => { ... return "ok"|"broken"|"unknown"; },
  *   });
  *   const broken = await probe.run(apiKey, models);

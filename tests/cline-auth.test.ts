@@ -259,7 +259,7 @@ describe("oauth.refresh", () => {
 		};
 		// The proven flow retries once after 1s before throwing.
 		await expect(refreshClineCredential(cred)).rejects.toThrow(
-			/run \/login cline/i,
+			/run \/login free-cline/i,
 		);
 	}, 10_000);
 });

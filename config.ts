@@ -48,6 +48,7 @@ import {
 	PROVIDER_INFRON,
 	PROVIDER_MERGE,
 	PROVIDER_COMMANDCODE,
+	normalizeLegacyProviderId,
 } from "./constants.ts";
 // SAFETY: This re-export is intentional — every provider module imports its
 // `PROVIDER_*` constant via `from "../../config.ts"` (see providers/kilo/kilo.ts,
@@ -382,6 +383,27 @@ export function loadConfigFile(): PiFreeConfig {
 			readFileSync(CONFIG_PATH, "utf8"),
 			safeJsonReviver,
 		) as PiFreeConfig;
+		// Legacy provider IDs (bare upstream names) migrate to free- prefixed
+		// IDs in memory. The next write persists the migrated keys.
+		if (parsed.model_view_overrides) {
+			const migrated: PiFreeConfig["model_view_overrides"] = {};
+			for (const [id, view] of Object.entries(parsed.model_view_overrides)) {
+				migrated[normalizeLegacyProviderId(id)] = view;
+			}
+			parsed.model_view_overrides = migrated;
+		}
+		if (parsed.hidden_models) {
+			parsed.hidden_models = parsed.hidden_models.map((entry) => {
+				const [id = "", ...rest] = entry.split("/");
+				return rest.length > 0
+					? `${normalizeLegacyProviderId(id)}/${rest.join("/")}`
+					: normalizeLegacyProviderId(id);
+			});
+		}
+		if (parsed.auto_fallback_providers) {
+			parsed.auto_fallback_providers =
+				parsed.auto_fallback_providers.map(normalizeLegacyProviderId);
+		}
 		cachedConfig = parsed;
 		cachedConfigMtime = mtime ?? -1;
 		return Object.freeze(parsed) as PiFreeConfig;

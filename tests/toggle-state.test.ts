@@ -6,8 +6,9 @@ describe("toggle-state helper", () => {
 	it("toggles from the actual currently applied mode", () => {
 		const save = vi.fn();
 		const state = createToggleState({
-			providerId: "cline",
+			providerId: "free-cline",
 			initialShowPaid: false,
+			configKey: "cline_show_paid",
 			save,
 		});
 
@@ -63,7 +64,7 @@ describe("toggle-state helper", () => {
 
 	it("re-applies persisted show-paid mode after model refresh", () => {
 		const state = createToggleState({
-			providerId: "cline",
+			providerId: "free-cline",
 			initialShowPaid: true,
 			save: vi.fn(),
 		});

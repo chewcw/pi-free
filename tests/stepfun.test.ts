@@ -86,7 +86,7 @@ describe("StepFun native provider", () => {
 		expect(mocks.registerNativeOpenAIProvider).toHaveBeenCalledWith(
 			pi,
 			expect.objectContaining({
-				providerId: "stepfun",
+				providerId: "free-stepfun",
 				name: "StepFun",
 				baseUrl: "https://api.stepfun.ai/step_plan/v1",
 			}),
@@ -98,7 +98,7 @@ describe("StepFun native provider", () => {
 		const models = await fetchStepfunModels("test-key", signal);
 
 		expect(mocks.fetchModels).toHaveBeenCalledWith([
-			"stepfun",
+			"free-stepfun",
 			"https://api.stepfun.ai/step_plan/v1",
 			"test-key",
 			expect.objectContaining({ contextWindow: 128_000, maxTokens: 16_384 }),

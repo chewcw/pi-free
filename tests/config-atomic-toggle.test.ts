@@ -95,12 +95,12 @@ describe("atomic toggle resolves from the locked read (#603)", () => {
 			configPath(),
 			JSON.stringify({
 				free_only: true,
-				model_view_overrides: { kilo: "all" },
+				model_view_overrides: { "free-kilo": "all" },
 			}),
 		);
 
 		// Must flip the FRESH state (all -> free), not the stale memo (free -> all).
-		await expect(toggleModelViewOverride("kilo")).resolves.toBe("free");
+		await expect(toggleModelViewOverride("free-kilo")).resolves.toBe("free");
 	});
 
 	// The memo-stale case above is the PIN (it reds when the flip reads
@@ -113,8 +113,8 @@ describe("atomic toggle resolves from the locked read (#603)", () => {
 
 		const { toggleModelViewOverride } = await import("../config.ts");
 		const applied = await Promise.all([
-			toggleModelViewOverride("kilo"),
-			toggleModelViewOverride("kilo"),
+			toggleModelViewOverride("free-kilo"),
+			toggleModelViewOverride("free-kilo"),
 		]);
 		expect([...applied].sort()).toEqual(["all", "free"]);
 	});

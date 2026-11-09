@@ -16,7 +16,7 @@
  *   4. `get_commands` + `get_available_models` again — registration and
  *      the free-only view survive replacement (#509 stale-ctx class and
  *      the #510 filter-stickiness class).
- *   5. `/toggle-llm7` via prompt dispatch, then another `new_session` —
+ *   5. `/toggle-free-llm7` via prompt dispatch, then another `new_session` —
  *      the flipped choice persists and shows in the catalog.
  *
  * Waiting is poll-until-condition with deadlines, never fixed sleeps, so
@@ -57,7 +57,7 @@ function managedIds(commands) {
 
 // Deterministic anchor: static keyless catalog with free AND paid
 // selectors, always available without network or credentials.
-const ANCHOR_PROVIDER = "llm7";
+const ANCHOR_PROVIDER = "free-llm7";
 
 const driver = bootPi({
 	cwd: process.cwd(),
@@ -156,7 +156,7 @@ async function waitLoggedOutHidden(phase) {
 		async () => {
 			const models =
 				(await driver.send({ type: "get_available_models" })).models ?? [];
-			const kilo = models.filter((m) => m.provider === "kilo");
+			const kilo = models.filter((m) => m.provider === "free-kilo");
 			const anchor = models.filter((m) => m.provider === ANCHOR_PROVIDER);
 			if (kilo.length > 0) {
 				throw new Error(
@@ -224,7 +224,7 @@ try {
 	// Slash commands dispatch through prompt preflight — no model runs.
 	// The persisted override (not just catalog presence, which a transient
 	// unfiltered snapshot could fake) proves the command did its write.
-	await driver.prompt("/toggle-llm7");
+	await driver.prompt("/toggle-free-llm7");
 	await driver.waitFor(
 		async () =>
 			readSeededConfig()?.model_view_overrides?.llm7 === "all" ? true : null,
@@ -243,7 +243,7 @@ try {
 		{ timeoutMs: 60_000, label: "post-toggle llm7/pro" },
 	);
 	console.log(
-		`post-toggle: llm7/pro visible after /toggle-llm7 (${toggled.length} total)`,
+		`post-toggle: llm7/pro visible after /toggle-free-llm7 (${toggled.length} total)`,
 	);
 	await driver.send({ type: "new_session" });
 	const persisted = await driver.waitFor(

@@ -2,7 +2,7 @@
  * LLM7 factory wiring tests (end-to-end: extension wiring + real native
  * provider). Mirrors tests/cline.test.ts: verifies the network-free factory,
  * native registration, keyless registration (no skip when LLM7_API_KEY is
- * unset), /toggle-llm7, the global /toggle-free re-register hook, the ToS
+ * unset), /toggle-free-llm7, the global /toggle-free re-register hook, the ToS
  * notice, and the session_start refresh nudge.
  */
 
@@ -108,7 +108,7 @@ describe("LLM7 factory wiring", () => {
 		expect(mockFetch).not.toHaveBeenCalled();
 		expect(mockRegisterProvider).toHaveBeenCalledTimes(1);
 		const provider = mockRegisterProvider.mock.calls[0]![0];
-		expect(provider.id).toBe("llm7");
+		expect(provider.id).toBe("free-llm7");
 		expect(provider.getModels().map((m: { id: string }) => m.id)).toEqual([
 			"default",
 			"fast",
@@ -120,7 +120,7 @@ describe("LLM7 factory wiring", () => {
 		expect(mockOn).toHaveBeenCalledWith("model_select", expect.any(Function));
 		expect(mockOn).toHaveBeenCalledWith("session_start", expect.any(Function));
 		expect(
-			mockRegisterCommand.mock.calls.some((c) => c[0] === "toggle-llm7"),
+			mockRegisterCommand.mock.calls.some((c) => c[0] === "toggle-free-llm7"),
 		).toBe(true);
 	});
 
@@ -133,7 +133,7 @@ describe("LLM7 factory wiring", () => {
 			unknown,
 			boolean,
 		];
-		expect(providerId).toBe("llm7");
+		expect(providerId).toBe("free-llm7");
 		expect(hasKey).toBe(false);
 
 		mockGetLlm7ApiKey.mockReturnValue("sk-llm7");
@@ -162,13 +162,13 @@ describe("LLM7 factory wiring", () => {
 	});
 
 	// Flip/persist/view behavior is proven live by rpc-session-check
-	// (/toggle-llm7 through prompt dispatch, incl. persistence across
+	// (/toggle-free-llm7 through prompt dispatch, incl. persistence across
 	// replacement); this pins the per-provider wiring that would
 	// otherwise go unverified.
-	it("registers the toggle-llm7 command", async () => {
+	it("registers the toggle-free-llm7 command", async () => {
 		await llm7Provider(mockPi);
 		const call = mockRegisterCommand.mock.calls.find(
-			(c) => c[0] === "toggle-llm7",
+			(c) => c[0] === "toggle-free-llm7",
 		);
 		expect(call).toBeDefined();
 	});
@@ -182,21 +182,21 @@ describe("LLM7 factory wiring", () => {
 		const notify = vi.fn();
 
 		// Keyless: notice is logged instead of sent to Pi's terminal UI.
-		await handler({}, { model: { provider: "llm7" }, ui: { notify } });
+		await handler({}, { model: { provider: "free-llm7" }, ui: { notify } });
 		expect(notify).not.toHaveBeenCalled();
 		expect(mockLogger.debug).toHaveBeenCalledWith("Free-model terms notice", {
-			provider: "llm7",
+			provider: "free-llm7",
 			termsUrl: "https://llm7.io/",
 		});
 
 		// Only once per session.
 		notify.mockClear();
-		await handler({}, { model: { provider: "llm7" }, ui: { notify } });
+		await handler({}, { model: { provider: "free-llm7" }, ui: { notify } });
 		expect(notify).not.toHaveBeenCalled();
 
 		// Other providers never trigger it.
 		const notify2 = vi.fn();
-		await handler({}, { model: { provider: "kilo" }, ui: { notify: notify2 } });
+		await handler({}, { model: { provider: "free-kilo" }, ui: { notify: notify2 } });
 		expect(notify2).not.toHaveBeenCalled();
 	});
 
@@ -207,7 +207,7 @@ describe("LLM7 factory wiring", () => {
 			(call) => call[0] === "model_select",
 		)?.[1];
 		const notify = vi.fn();
-		await handler({}, { model: { provider: "llm7" }, ui: { notify } });
+		await handler({}, { model: { provider: "free-llm7" }, ui: { notify } });
 		expect(notify).not.toHaveBeenCalled();
 	});
 
