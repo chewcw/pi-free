@@ -38,7 +38,7 @@ vi.mock("../config.ts", () => ({
 		mockSetModelViewOverride(...args),
 	getKiloFreeOnly: () => mockGetKiloFreeOnly(),
 	applyHidden: (models: unknown[]) => models,
-	PROVIDER_KILO: "kilo",
+	PROVIDER_KILO: "free-kilo",
 }));
 
 vi.mock("../lib/registry.ts", () => ({
@@ -156,7 +156,7 @@ beforeEach(() => {
 describe("createKiloProvider shape", () => {
 	it("builds a native provider with auth, getModels, refreshModels, streams", () => {
 		const { provider } = createKiloProvider();
-		expect(provider.id).toBe("kilo");
+		expect(provider.id).toBe("free-kilo");
 		expect(provider.name).toBe("Kilo");
 		expect(provider.baseUrl).toContain("/api/gateway");
 		expect(typeof provider.getModels).toBe("function");
@@ -182,13 +182,13 @@ describe("refreshModels offline init", () => {
 				{
 					...freeCfg("a"),
 					api: "openai-completions",
-					provider: "kilo",
+					provider: "free-kilo",
 					baseUrl: "x",
 				},
 				{
 					...paidCfg("b"),
 					api: "openai-completions",
-					provider: "kilo",
+					provider: "free-kilo",
 					baseUrl: "x",
 				},
 			],
@@ -345,7 +345,7 @@ describe("refreshModels online", () => {
 				{
 					...freeCfg("a"),
 					api: "openai-completions",
-					provider: "kilo",
+					provider: "free-kilo",
 					baseUrl: "x",
 				},
 			],

@@ -92,7 +92,7 @@ function modelStub(id: string) {
 	return {
 		id,
 		api: "qoder-api",
-		provider: "qoder",
+		provider: "free-qoder",
 		input: ["text"],
 	} as any;
 }

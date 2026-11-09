@@ -85,7 +85,7 @@ function modelStub() {
 	return {
 		id: "lite",
 		api: "qoder-api",
-		provider: "qoder",
+		provider: "free-qoder",
 		input: ["text"],
 	} as never;
 }

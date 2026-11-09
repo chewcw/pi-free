@@ -38,7 +38,7 @@ vi.mock("../config.ts", () => ({
 	setModelViewOverride: (...args: unknown[]) =>
 		mockSetModelViewOverride(...args),
 	applyHidden: (models: unknown[]) => models,
-	PROVIDER_CLINE: "cline",
+	PROVIDER_CLINE: "free-cline",
 }));
 
 vi.mock("../lib/registry.ts", () => ({
@@ -173,7 +173,7 @@ afterEach(() => {
 describe("createClineProvider shape", () => {
 	it("builds a native provider with auth, getModels, refreshModels, streams", () => {
 		const { provider } = createClineProvider();
-		expect(provider.id).toBe("cline");
+		expect(provider.id).toBe("free-cline");
 		expect(provider.name).toBe("Cline");
 		expect(provider.baseUrl).toBe("https://api.cline.bot/api/v1");
 		expect(typeof provider.getModels).toBe("function");
@@ -248,13 +248,13 @@ describe("refreshModels offline init", () => {
 				{
 					...freeCfg("a"),
 					api: "openai-completions",
-					provider: "cline",
+					provider: "free-cline",
 					baseUrl: BASE_URL_CLINE,
 				},
 				{
 					...paidCfg("b"),
 					api: "openai-completions",
-					provider: "cline",
+					provider: "free-cline",
 					baseUrl: BASE_URL_CLINE,
 				},
 			],
@@ -280,7 +280,7 @@ describe("refreshModels offline init", () => {
 				{
 					...freeCfg("a"),
 					api: LEGACY_CLINE_API,
-					provider: "cline",
+					provider: "free-cline",
 					baseUrl: "https://stale.example",
 				},
 			],
@@ -306,13 +306,13 @@ describe("refreshModels offline init", () => {
 					{
 						...freeCfg("a"),
 						api: LEGACY_CLINE_API,
-						provider: "cline",
+						provider: "free-cline",
 						baseUrl: "https://stale.example",
 					},
 					{
 						...paidCfg("b"),
 						api: "openai-completions",
-						provider: "cline",
+						provider: "free-cline",
 						baseUrl: BASE_URL_CLINE,
 					},
 				],
@@ -384,13 +384,13 @@ describe("normalizeStoredClineModels", () => {
 		const legacy = {
 			id: "legacy",
 			api: LEGACY_CLINE_API,
-			provider: "cline",
+			provider: "free-cline",
 			baseUrl: "old",
 		};
 		const modern = {
 			id: "modern",
 			api: "openai-completions",
-			provider: "cline",
+			provider: "free-cline",
 			baseUrl: BASE_URL_CLINE,
 		};
 		const normalized = normalizeStoredClineModels([legacy, modern] as never);
@@ -418,13 +418,13 @@ describe("normalizeStoredClineModels", () => {
 				{
 					...freeCfg("a"),
 					api: LEGACY_CLINE_API,
-					provider: "cline",
+					provider: "free-cline",
 					baseUrl: "https://stale.example",
 				},
 				{
 					...freeCfg("b"),
 					api: LEGACY_CLINE_API,
-					provider: "cline",
+					provider: "free-cline",
 					baseUrl: "https://stale.example",
 				},
 			],
@@ -451,7 +451,7 @@ describe("normalizeStoredClineModels", () => {
 				{
 					...freeCfg("a"),
 					api: "openai-completions",
-					provider: "cline",
+					provider: "free-cline",
 					baseUrl: BASE_URL_CLINE,
 				},
 			],
@@ -464,7 +464,7 @@ describe("normalizeStoredClineModels", () => {
 		await provider.refreshModels?.(ctx({ store, allowNetwork: false }));
 
 		expect(mockLoggerWarn).toHaveBeenCalledWith(
-			expect.stringContaining("Stale cline models store"),
+			expect.stringContaining("Stale free-cline models store"),
 			expect.objectContaining({ modelCount: 1, ageDays: expect.any(Number) }),
 		);
 	});
@@ -502,7 +502,7 @@ describe("refreshModels online", () => {
 		expect(
 			written[0]!.models.every((m) => m.api === "openai-completions"),
 		).toBe(true);
-		expect(written[0]!.models.every((m) => m.provider === "cline")).toBe(true);
+		expect(written[0]!.models.every((m) => m.provider === "free-cline")).toBe(true);
 		expect(written[0]!.models.every((m) => m.baseUrl === BASE_URL_CLINE)).toBe(
 			true,
 		);
@@ -529,7 +529,7 @@ describe("refreshModels online", () => {
 				{
 					...freeCfg("a"),
 					api: "openai-completions",
-					provider: "cline",
+					provider: "free-cline",
 					baseUrl: BASE_URL_CLINE,
 				},
 			],
@@ -599,7 +599,7 @@ describe("stream wiring", () => {
 			id: "nvidia/nemotron-3.5-lightning:free",
 			name: "nemotron",
 			api: "openai-completions",
-			provider: "cline",
+			provider: "free-cline",
 			baseUrl: BASE_URL_CLINE,
 		};
 	}
@@ -715,7 +715,7 @@ describe("stream wiring", () => {
 			];
 			const models = createModels();
 			models.setProvider(provider);
-			const model = models.getModels("cline")[0];
+			const model = models.getModels("free-cline")[0];
 
 			const stream = models.stream(model as never, clineContext() as never, {
 				apiKey: "workos:test-token",

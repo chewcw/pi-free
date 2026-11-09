@@ -5,7 +5,7 @@
  * mock createKiloProvider and assert the extension factory wires it up correctly:
  *   - registers the native provider via the single-arg registerProvider(provider)
  *   - participates in the global toggle (registerWithGlobalToggle)
- *   - /toggle-kilo flips show_paid and re-registers the same provider object
+ *   - /toggle-free-kilo flips show_paid and re-registers the same provider object
  *   - model_select ToS notice + session_start handler
  *   - OAuth-aware ToS suppression through the model registry
  */
@@ -29,7 +29,7 @@ const mockRegisterWithGlobalToggle = vi.hoisted(() =>
 	vi.fn<(...args: unknown[]) => void>(),
 );
 const mockProvider = vi.hoisted(() => ({
-	id: "kilo",
+	id: "free-kilo",
 	name: "Kilo",
 	auth: { apiKey: { name: "Kilo API key" }, oauth: { name: "Kilo" } },
 	getModels: () => [],
@@ -54,7 +54,7 @@ vi.mock("../config.ts", () => ({
 	setModelViewOverride: (...args: unknown[]) =>
 		mockSetModelViewOverride(...args),
 	saveConfig: (...args: unknown[]) => mockSaveConfig(...args),
-	PROVIDER_KILO: "kilo",
+	PROVIDER_KILO: "free-kilo",
 }));
 
 vi.mock("../lib/registry.ts", () => ({
@@ -124,7 +124,7 @@ describe("Kilo extension wiring", () => {
 	it("registers with the global toggle system (hasKey=false by default)", async () => {
 		await kiloProvider(mockPi);
 		expect(mockRegisterWithGlobalToggle).toHaveBeenCalledWith(
-			"kilo",
+			"free-kilo",
 			mockStored,
 			expect.any(Function),
 			false,
@@ -136,7 +136,7 @@ describe("Kilo extension wiring", () => {
 		mockGetKiloApiKey.mockReturnValue("sk-kilo-test");
 		await kiloProvider(mockPi);
 		expect(mockRegisterWithGlobalToggle).toHaveBeenCalledWith(
-			"kilo",
+			"free-kilo",
 			mockStored,
 			expect.any(Function),
 			true,
@@ -155,14 +155,14 @@ describe("Kilo extension wiring", () => {
 		expect(mockRegisterProvider).toHaveBeenCalledWith(mockProvider);
 	});
 
-	describe("/toggle-kilo command", () => {
+	describe("/toggle-free-kilo command", () => {
 		// Flip/persist/view behavior is proven live by rpc-toggle-check
 		// (opencode-free) + rpc-session-check (/toggle-llm7); this pins
 		// the per-provider wiring that would otherwise go unverified.
 		it("registers the toggle command", async () => {
 			await kiloProvider(mockPi);
 			const call = mockRegisterCommand.mock.calls.find(
-				(c) => c[0] === "toggle-kilo",
+				(c) => c[0] === "toggle-free-kilo",
 			);
 			expect(call).toBeDefined();
 		});
@@ -182,12 +182,12 @@ describe("Kilo extension wiring", () => {
 			const call = mockOn.mock.calls.find((c) => c[0] === "model_select");
 			if (!call) throw new Error("model_select not registered");
 			const notify = vi.fn();
-			await call[1]({}, { model: { provider: "kilo" }, ui: { notify } });
+			await call[1]({}, { model: { provider: "free-kilo" }, ui: { notify } });
 			expect(notify).not.toHaveBeenCalled();
 			expect(mockLogger.debug).toHaveBeenCalledWith(
 				"Free-model terms notice",
 				expect.objectContaining({
-					provider: "kilo",
+					provider: "free-kilo",
 					termsUrl: expect.any(String),
 				}),
 			);
@@ -202,12 +202,12 @@ describe("Kilo extension wiring", () => {
 			await call[1](
 				{},
 				{
-					model: { provider: "kilo" },
+					model: { provider: "free-kilo" },
 					modelRegistry: { isUsingOAuth },
 					ui: { notify },
 				},
 			);
-			expect(isUsingOAuth).toHaveBeenCalledWith({ provider: "kilo" });
+			expect(isUsingOAuth).toHaveBeenCalledWith({ provider: "free-kilo" });
 			expect(notify).not.toHaveBeenCalled();
 		});
 	});

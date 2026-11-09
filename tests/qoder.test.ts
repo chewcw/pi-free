@@ -113,7 +113,7 @@ describe("Qoder native provider", () => {
 
 		const provider = getRegisteredProvider();
 		expect(provider).toMatchObject({
-			id: "qoder",
+			id: "free-qoder",
 			name: "Qoder",
 			baseUrl: "https://api2-v2.qoder.sh",
 		});
@@ -129,7 +129,7 @@ describe("Qoder native provider", () => {
 		expect(provider.streamSimple).toEqual(expect.any(Function));
 		expect(mocks.registerNativeProviderRefresh).toHaveBeenCalledWith(
 			pi,
-			"qoder",
+			"free-qoder",
 		);
 	});
 
@@ -160,7 +160,7 @@ describe("Qoder native provider", () => {
 		// else the global default) — no registration-time showPaid travels
 		// with the call, so it can never go stale across sessions (#510).
 		const call = mocks.filterNativeModels.mock.lastCall as unknown[];
-		expect(call[0]).toBe("qoder");
+		expect(call[0]).toBe("free-qoder");
 		expect(call[1]).toBe(models);
 		expect(call[2]).toMatchObject({ freeModels: expect.any(Array) });
 		expect(call[2]).not.toHaveProperty("showPaid");
@@ -172,7 +172,7 @@ describe("Qoder native provider", () => {
 		expect(mocks.registerNativeProviderToggle).toHaveBeenCalledWith(
 			pi,
 			expect.objectContaining({
-				providerId: "qoder",
+				providerId: "free-qoder",
 				stored: expect.any(Object),
 				reRegister: expect.any(Function),
 			}),
@@ -201,7 +201,7 @@ describe("Qoder native provider", () => {
 
 		await provider.refreshModels(context);
 		expect(mocks.restoreNativeProviderModels).toHaveBeenCalledWith(
-			"qoder",
+			"free-qoder",
 			context,
 			expect.any(Function),
 		);

@@ -142,7 +142,7 @@ function model(id: string) {
 		contextWindow: 32_000,
 		maxTokens: 16_384,
 		api: "openai-completions",
-		provider: "ollama-cloud",
+		provider: "free-ollama-cloud",
 		baseUrl: "https://ollama.com/v1",
 	};
 }
@@ -158,7 +158,7 @@ beforeEach(() => {
 describe("createOllamaProvider", () => {
 	it("builds an OpenAI-compatible native provider", async () => {
 		const { provider } = createOllamaProvider([model("initial")]);
-		expect(provider.id).toBe("ollama-cloud");
+		expect(provider.id).toBe("free-ollama-cloud");
 		expect(provider.baseUrl).toBe("https://ollama.com/v1");
 		expect(provider.getModels().map((item) => item.id)).toEqual(["initial"]);
 		expect(
@@ -268,9 +268,9 @@ describe("Ollama native factory", () => {
 		await ollamaEntry(pi);
 
 		expect(registerProvider).toHaveBeenCalledTimes(1);
-		expect(registerProvider.mock.calls[0]![0].id).toBe("ollama-cloud");
+		expect(registerProvider.mock.calls[0]![0].id).toBe("free-ollama-cloud");
 		expect(registerCommand).toHaveBeenCalledWith(
-			"toggle-ollama-cloud",
+			"toggle-free-ollama-cloud",
 			expect.any(Object),
 		);
 		expect(mockFetchWithRetry).not.toHaveBeenCalled();
@@ -280,7 +280,7 @@ describe("Ollama native factory", () => {
 	// (opencode-free); this pins the per-provider wiring (incl. the
 	// provider-id persistence key, not a divergent snake_case key) that
 	// would otherwise go unverified.
-	it("registers the toggle-ollama-cloud command", async () => {
+	it("registers the toggle-free-ollama-cloud command", async () => {
 		const registerProvider = vi.fn();
 		const registerCommand = vi.fn();
 		const on = vi.fn();
@@ -293,7 +293,7 @@ describe("Ollama native factory", () => {
 		await ollamaEntry(pi);
 
 		const toggleCommand = registerCommand.mock.calls.find(
-			(call) => call[0] === "toggle-ollama-cloud",
+			(call) => call[0] === "toggle-free-ollama-cloud",
 		);
 		expect(toggleCommand).toBeDefined();
 	});

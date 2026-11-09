@@ -117,11 +117,11 @@ describe("ZenMux native factory", () => {
 
 		expect(registerProvider).toHaveBeenCalledTimes(1);
 		const provider = registerProvider.mock.calls[0]![0];
-		expect(provider.id).toBe("zenmux");
+		expect(provider.id).toBe("free-zenmux");
 		expect(provider.auth.apiKey).toBeDefined();
 		expect(provider.getModels()).toEqual([]);
 		expect(registerCommand).toHaveBeenCalledWith(
-			"toggle-zenmux",
+			"toggle-free-zenmux",
 			expect.any(Object),
 		);
 		expect(on).toHaveBeenCalledWith("session_start", expect.any(Function));
@@ -131,7 +131,7 @@ describe("ZenMux native factory", () => {
 		mockGetZenmuxApiKey.mockReturnValue("sk-zenmux");
 		await zenmuxProvider(mockPi);
 		const args = mockRegisterWithGlobalToggle.mock.calls[0]!;
-		expect(args[0]).toBe("zenmux");
+		expect(args[0]).toBe("free-zenmux");
 		expect(args[3]).toBe(true);
 	});
 
@@ -156,7 +156,7 @@ describe("ZenMux native factory", () => {
 	it("wires the toggle and session refresh handlers", async () => {
 		await zenmuxProvider(mockPi);
 		const toggle = registerCommand.mock.calls.find(
-			(call) => call[0] === "toggle-zenmux",
+			(call) => call[0] === "toggle-free-zenmux",
 		);
 		expect(toggle).toBeDefined();
 
